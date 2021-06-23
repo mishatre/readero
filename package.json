@@ -1,6 +1,7 @@
 {
   "name": "readero",
   "version": "0.1.0",
+  "homepage": "https://mishatre.github.io/readero",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
@@ -15,6 +16,7 @@
     "epub": "^1.2.1",
     "fast-xml-parser": "^3.19.0",
     "fs": "^0.0.1-security",
+    "gh-pages": "^3.2.3",
     "jszip": "^3.6.0",
     "localforage": "^1.9.0",
     "react": "^17.0.2",
@@ -26,6 +28,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

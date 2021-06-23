@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useStorageContext } from "../../Providers/Storage";
 
 import SingleWordRender from '../../Components/SingleWordRender';
@@ -135,6 +135,8 @@ function secondsToStr (seconds1: number) {
 
 const Reader = () => {
 
+    const history = useHistory();
+
     const [rawBookText, setRawBookText] = useState<string>('');
     const [bookText, setBookText] = useState<string[]>([]);
 
@@ -183,10 +185,12 @@ const Reader = () => {
         togglePlay();
     }, [togglePlay]);
 
+    const goBack = useCallback(() => {history.goBack()}, []);
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <AngleLeft />
+                <AngleLeft onClick={goBack}/>
                 <div className={styles.title}>{title}</div>
                 <CogIcon />
             </div>
