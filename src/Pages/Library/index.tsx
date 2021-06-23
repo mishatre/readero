@@ -1,27 +1,25 @@
-
-
 import Book from '../../Components/Book';
 import styles from './styles.module.scss';
 import EPub from '../../Libraries/epub';
 
 import { useStorageContext } from '../../Providers/Storage';
 import useFileInput from '../../hooks/useFileInput';
+import { useCallback } from 'react';
+
+import { ReactComponent as PlusIcon } from '../../assets/icons/plus-solid.svg';
 
 const Library = () => {
+    const { library, settings, addBook } = useStorageContext();
 
-    const { library, addBook } = useStorageContext();
-    
     const onAdd = useFileInput({}, (files: File[]) => {
-    
-        if(files.length === 0) {
+        if (files.length === 0) {
             return;
         }
 
-        const selectedFile = files[0];    
+        const selectedFile = files[0];
         const epub = new EPub(selectedFile);
         epub.parse().then((res) => {
-
-            if(!epub.metadata.id) {
+            if (!epub.metadata.id) {
                 return;
             }
 
@@ -31,34 +29,41 @@ const Library = () => {
                 author: epub.metadata.creator,
                 cover: epub.cover || undefined,
                 content: epub.compiled,
-            })
-
+            });
         });
-    })
+    });
+
+    const onBookClick = useCallback((id: string) => {}, []);
 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <div className={styles.title}>
-                    Library
+                <div className={styles.title}>Library</div>
+                <div className={styles.add} onClick={onAdd}>
+                    <PlusIcon />
                 </div>
-                <div className={styles.add} onClick={onAdd}>+</div>
             </div>
             <div className={styles.listContainer}>
                 <div className={styles.list}>
-                    {library.map(bookInfo => <Book key={bookInfo.id} {...bookInfo} /> )}
+                    {library.map((book) => (
+                        <Book
+                            key={book.id}
+                            book={book}
+                            stats={{
+                                completed: '100',
+                                timeToRead: '1',
+                            }}
+                            onClick={onBookClick}
+                        />
+                    ))}
                 </div>
             </div>
             <div className={styles.bottomMenu}>
-               <div>
-                   Library
-               </div>
-               <div>
-                   Settings
-               </div>
+                <div>Library</div>
+                <div>Settings</div>
             </div>
         </div>
     );
-}
+};
 
 export default Library;

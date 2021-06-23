@@ -1,37 +1,48 @@
-
 import cn from 'classnames';
 import { Link } from 'react-router-dom';
+import { timeToRead, completionRate } from '../../utils/wordTime';
 import styles from './styles.module.scss';
 
+import { IBookInfo } from '../../Providers/Storage';
+
 interface IBookProps {
-    id: string;
-    title: string;
-    author: string;
-    ttc?: string;
-    completed?: number;
-    cover?: string;
+    book: IBookInfo;
+    stats: {
+        completed: string;
+        timeToRead: string;
+    };
+    onClick: (id: string) => void;
 }
 
-function Book({
-    id,
-    title,
-    author,
-    completed,
-    ttc,
-    cover
-}: IBookProps) {
+function Book({ book, stats, onClick }: IBookProps) {
+    const completed = completionRate(1500, 1000);
+    const ttr = timeToRead(1500, 1000, 320);
 
     return (
-        <Link to={`/book/${id}`} className={styles.container} >
-            <div className={cn(styles.book, { [styles.nocover]: !cover })} style={cover ? ({ background: `url(${cover})`, backgroundSize: 'cover' }) : {}}>
-                <div className={styles.bookWrapper}>
+        <Link to={`/book/${book.id}`} className={styles.container}>
+            <div
+                className={cn(styles.book, { [styles.nocover]: !book.cover })}
+                style={
+                    book.cover
+                        ? {
+                              background: `url(${book.cover})`,
+                              backgroundSize: 'cover',
+                          }
+                        : {}
+                }
+            >
+                {/* <div className={styles.bookWrapper}>
                     {!cover && <div className={styles.title}>{title}</div>}
                     {!cover && <div className={styles.author}>{author}</div>}
-                </div>
+                </div> */}
             </div>
             <div className={styles.bottom}>
-                <div>{completed}%</div>
-                <div>{ttc}</div>
+                <div>
+                    {stats.completed !== '100'
+                        ? `${stats.completed} %`
+                        : 'FINISHED'}
+                </div>
+                <div>{stats.timeToRead}</div>
             </div>
         </Link>
     );

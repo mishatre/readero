@@ -1,0 +1,16 @@
+.container {
+    overflow: hidden;
+    .textContainer {
+        overflow-y: scroll;
+
+        .text {
+        }
+    }
+
+    .textPlayer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+    }
+}

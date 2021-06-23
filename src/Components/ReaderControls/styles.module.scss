@@ -1,0 +1,32 @@
+.container {
+    border-top: 1px solid #333;
+
+    padding: 10px;
+
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+
+    .controls {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        .speedButtons {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .button {
+            height: 20px;
+            width: 20px;
+            padding: 20px;
+            border-radius: 50%;
+            background-color: yellow;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 24px;
+        }
+    }
+}

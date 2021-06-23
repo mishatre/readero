@@ -1,18 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { useStorageContext } from "../../Providers/Storage";
-
-import SingleWordRender from '../../Components/SingleWordRender';
+import { useCallback, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import { useStorageContext } from '../../Providers/Storage';
 
 import { ReactComponent as CogIcon } from '../../assets/icons/cog-solid.svg';
 import { ReactComponent as AngleLeft } from '../../assets/icons/angle-left-solid.svg';
 
-import { ReactComponent as PlayIcon } from '../../assets/icons/play-solid.svg';
-import { ReactComponent as PauseIcon } from '../../assets/icons/pause-solid.svg';
-import { ReactComponent as MinusIcon } from '../../assets/icons/minus-solid.svg';
-import { ReactComponent as PlusIcon } from '../../assets/icons/plus-solid.svg';
-
 import styles from './styles.module.scss';
+import BookPlayer from '../../Components/BookPlayer';
+import ReaderControls from '../../Components/ReaderControls';
 
 interface TimerOptions {
     delay: number;
@@ -23,7 +18,6 @@ interface TimerOptions {
 const never = Number.MAX_SAFE_INTEGER;
 
 function useAccurateTimer(options: TimerOptions) {
-
     const now = new Date().getTime();
     const [started, setStarted] = useState(false);
     // This is used to trigger a render that checks to fire the timer
@@ -35,7 +29,9 @@ function useAccurateTimer(options: TimerOptions) {
 
     const start = useCallback(() => {
         const currentTime = new Date().getTime();
-        const newNextFireTime = options.delay ? Math.max(currentTime, currentTime) : never;
+        const newNextFireTime = options.delay
+            ? Math.max(currentTime, currentTime)
+            : never;
         setNextFireTime(newNextFireTime);
         setStarted(true);
     }, [options.delay]);
@@ -46,13 +42,15 @@ function useAccurateTimer(options: TimerOptions) {
     }, []);
 
     useEffect(() => {
-
         let timeout: NodeJS.Timeout;
 
         // If it's a timer and it isn't paused...
         if (options.delay && !isStopped()) {
             // Check if we're overdue on any events being fired (super low delay or expensive callback)
-            const overdueCalls = Math.max(0, Math.floor((now - nextFireTime) / options.delay));
+            const overdueCalls = Math.max(
+                0,
+                Math.floor((now - nextFireTime) / options.delay)
+            );
             // If we're overdue, this means we're not firing callbacks fast enough and need to prevent
             // exceeding the maximum update depth.
             // To do this, we only fire the callback on an even number of overdues (including 0, no overdues).
@@ -70,7 +68,10 @@ function useAccurateTimer(options: TimerOptions) {
                     }
                     // Calculate and set the next time the timer should fire
                     const overdueElapsedTime = overdueCalls * options.delay;
-                    const newFireTime = Math.max(now, nextFireTime + options.delay + overdueElapsedTime);
+                    const newFireTime = Math.max(
+                        now,
+                        nextFireTime + options.delay + overdueElapsedTime
+                    );
                     setNextFireTime(newFireTime);
                     // Set a timeout to check and fire the timer when time's up
                     timeout = setTimeout(() => {
@@ -81,9 +82,9 @@ function useAccurateTimer(options: TimerOptions) {
                 // Time is not up yet. Set a timeout to check and fire when time's up
                 else if (nextFireTime < never) {
                     timeout = setTimeout(() => {
-                    // This merely triggers a rerender to check if the timer can fire.
-                    setCheckTime(new Date().getTime());
-                    // Home in on the exact time to fire.
+                        // This merely triggers a rerender to check if the timer can fire.
+                        setCheckTime(new Date().getTime());
+                        // Home in on the exact time to fire.
                     }, Math.max(nextFireTime - new Date().getTime(), 1));
                 }
             } else {
@@ -100,124 +101,97 @@ function useAccurateTimer(options: TimerOptions) {
         return () => {
             clearTimeout(timeout);
         };
-
     }, [now, nextFireTime, isStopped, options.delay, options]);
 
     return {
         start,
         stop,
-    }
-
-}
-
-function secondsToStr (seconds1: number) {
-    // TIP: to find current time in milliseconds, use:
-    // var  current_time_milliseconds = new Date().getTime();
-    var temp = seconds1;
-    var days = Math.floor((temp %= 31536000) / 86400);
-    if (days) {
-        return days + ' d';
-    }
-    var hours = Math.floor((temp %= 86400) / 3600);
-    if (hours) {
-        return hours + ' h';
-    }
-    var minutes = Math.floor((temp %= 3600) / 60);
-    if (minutes) {
-        return minutes + ' m';
-    }
-    var seconds = temp % 60;
-    if (seconds) {
-        return seconds + ' s';
-    }
-    return '0'; //'just now' //or other string you like;
+    };
 }
 
 const Reader = () => {
-
     const history = useHistory();
 
     const [rawBookText, setRawBookText] = useState<string>('');
     const [bookText, setBookText] = useState<string[]>([]);
 
-    const { id } = useParams<{ id: string; }>();
+    const { id } = useParams<{ id: string }>();
     const { loaded, getBookContent } = useStorageContext();
 
     const [title, setTitle] = useState('');
 
     useEffect(() => {
-        if(!loaded) {
+        if (!loaded) {
             return;
         }
-        getBookContent(id)
-            .then(({ info, content }) => {
-                setTitle(info.title);
-                setRawBookText(content);
-                setBookText(content.split(' '));
-            });
+        getBookContent(id).then(({ info, content }) => {
+            setTitle(info.title);
+            setRawBookText(content);
+            setBookText(content.split(' '));
+        });
     }, [loaded, id]);
 
     const [speed, setSpeed] = useState(320);
     const [isPlaying, setPlaying] = useState(false);
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
-    const { start, stop } = useAccurateTimer({ 
+    const { start, stop } = useAccurateTimer({
         delay: (60 / speed) * 1000,
         callback: () => {
-            setCurrentWordIndex(v => v + 1);
-        }
+            setCurrentWordIndex((v) => v + 1);
+        },
     });
 
-    const togglePlay = useCallback(() => setPlaying(v => {
-        let newValue = !v;
-        if(newValue) {
-            start();
-        } else {
-            stop();
-        }
-        return newValue;
-    }), [start, stop]);
-   
-    const speedUp = useCallback(() => setSpeed(curr => curr + 20), []);
-    const speedDown = useCallback(() => setSpeed(curr => curr - 20), []);
-    
+    const togglePlay = useCallback(
+        () =>
+            setPlaying((v) => {
+                let newValue = !v;
+                if (newValue) {
+                    start();
+                } else {
+                    stop();
+                }
+                return newValue;
+            }),
+        [start, stop]
+    );
+
+    const speedUp = useCallback(() => setSpeed((curr) => curr + 20), []);
+    const speedDown = useCallback(() => setSpeed((curr) => curr - 20), []);
+
     const onPlayerClick = useCallback(() => {
         togglePlay();
     }, [togglePlay]);
 
-    const goBack = useCallback(() => {history.goBack()}, []);
+    const goBack = useCallback(() => {
+        history.goBack();
+    }, []);
 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <AngleLeft onClick={goBack}/>
+                <AngleLeft onClick={goBack} />
                 <div className={styles.title}>{title}</div>
                 <CogIcon />
             </div>
-            {!isPlaying && 
-                <div className={styles.textContainer}>
-                    <div className={styles.text}>{rawBookText}</div>
-                </div>
-            }
-            {isPlaying && 
-                <div className={styles.textPlayer} onClick={onPlayerClick}>
-                    <SingleWordRender word={bookText[currentWordIndex]} />
-                </div>
-            }
-            <div className={styles.bottomMenu}>
-                <div>{secondsToStr(Math.floor((bookText.length - currentWordIndex) / (speed / 60)))}</div>
-                <div className={styles.controls}>
-                    <div className={styles.speedButtons}>
-                        <div className={styles.button} onClick={speedDown}><MinusIcon /></div>
-                        <div className={styles.button} onClick={togglePlay}>
-                            {isPlaying ? <PauseIcon /> : <PlayIcon/> } {speed}</div>
-                        <div className={styles.button} onClick={speedUp}><PlusIcon /></div>
-                    </div>
-                </div>
-                <div>{((currentWordIndex / bookText.length) * 100).toFixed(1)} %</div>
-            </div>
+            <BookPlayer
+                isPlaying={isPlaying}
+                bookText={bookText}
+                currentWordIndex={currentWordIndex}
+                rawBookText={rawBookText}
+                onPlayerClick={onPlayerClick}
+            />
+            <ReaderControls
+                isPlaying={isPlaying}
+                currentIndex={currentWordIndex}
+                speedDown={speedDown}
+                speedUp={speedUp}
+                togglePlay={togglePlay}
+                wordsCount={bookText.length}
+                wordsPerMinute={speed}
+            />
         </div>
     );
-}
+};
 
 export default Reader;
