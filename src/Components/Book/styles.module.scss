@@ -1,0 +1,52 @@
+
+.container {
+
+    // height: 100px;
+    width: 120px;
+    min-width: 40px;
+
+    text-decoration: none;
+    color: unset;
+
+    .book {
+
+        display: flex;
+        
+        // border: 1px solid #333;        
+        min-height: 150px;
+
+        .bookWrapper {
+
+            flex-grow: 1;
+
+            margin: 4px;
+            border: 1px solid #fff;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .title {
+                padding-top: 10px;
+                color: rgb(255, 255, 255);
+            }
+    
+            .author {
+                padding-bottom: 10px;
+                color: rgb(255, 251, 251);
+            }
+        }
+
+        &.nocover {
+            background: linear-gradient(rgb(170, 169, 169) 0.5%, #9198e5);
+        }
+
+    }
+
+    .bottom {
+        display: grid;
+        grid-template-columns: max-content max-content;
+        justify-content: space-between;
+    }
+
+}

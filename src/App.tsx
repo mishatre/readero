@@ -1,25 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
+
+import { Switch, Route } from 'react-router-dom';
+import Providers from './Providers';
+
+import Reader from './Pages/Reader';
+import Library from './Pages/Library';
+
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Providers>
+      <Switch>
+        <Route path="/book/:id" component={Reader} />
+        <Route path="/" component={Library} />
+      </Switch>
+    </Providers>
   );
 }
 
