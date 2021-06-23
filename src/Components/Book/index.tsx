@@ -25,16 +25,16 @@ function Book({ book, stats, onClick }: IBookProps) {
                 style={
                     book.cover
                         ? {
-                              background: `url(${book.cover})`,
-                              backgroundSize: 'cover',
-                          }
+                            background: `url(${book.cover})`,
+                            backgroundSize: 'cover',
+                        }
                         : {}
                 }
             >
-                {/* <div className={styles.bookWrapper}>
-                    {!cover && <div className={styles.title}>{title}</div>}
-                    {!cover && <div className={styles.author}>{author}</div>}
-                </div> */}
+                <div className={styles.bookWrapper}>
+                    <div className={styles.title}>{book.title}</div>
+                    <div className={styles.author}>{book.author}</div>
+                </div>
             </div>
             <div className={styles.bottom}>
                 <div>

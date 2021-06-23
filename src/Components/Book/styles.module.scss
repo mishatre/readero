@@ -17,8 +17,8 @@
                 transparent 11px,
                 rgba(255, 255, 255, 0.25) 14px,
                 transparent 16px
-            ),
-            url(https://images-na.ssl-images-amazon.com/images/I/51pnouuPO5L.jpg);
+            );
+            // url(https://images-na.ssl-images-amazon.com/images/I/51pnouuPO5L.jpg);
 
         background-size: contain;
         box-shadow: 0 0 13px -2px black,
@@ -38,13 +38,13 @@
 
             .title {
                 padding-top: 10px;
-                color: rgb(255, 255, 255);
+                color: black;
             }
 
             .author {
                 text-align: center;
                 padding-bottom: 10px;
-                color: rgb(255, 251, 251);
+                color: black;
             }
         }
 

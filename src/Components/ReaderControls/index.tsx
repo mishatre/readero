@@ -5,6 +5,7 @@ import { ReactComponent as PlusIcon } from '../../assets/icons/plus-solid.svg';
 
 import styles from './styles.module.scss';
 import { completionRate, timeToRead } from '../../utils/wordTime';
+import { useCallback } from 'react';
 
 interface IReaderControlsProps {
     isPlaying: boolean;
@@ -32,29 +33,32 @@ const ReaderControls = ({
     const completed = completionRate(wordsCount, currentIndex);
     const ttr = timeToRead(wordsCount, currentIndex, wordsPerMinute);
 
+    const speedDownHanlder = useCallback((e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        speedDown();
+    }, [speedDown]);
+
+    const speedUpHanlder = useCallback((e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        speedUp();
+    }, [speedUp]);
+
     return (
-        <div className={styles.container}>
-            <div>
-                <div>Time to read</div>
-                <div>{ttr}</div>
-            </div>
+        <div className={styles.container} onClick={togglePlay}>
+            <div className={styles.topLine} />
             <div className={styles.controls}>
-                <div className={styles.speedButtons}>
-                    <div className={styles.button} onClick={speedDown}>
-                        <MinusIcon />
-                    </div>
-                    <div className={styles.button} onClick={togglePlay}>
-                        {isPlaying ? <PauseIcon /> : <PlayIcon />}{' '}
-                        {wordsPerMinute}
-                    </div>
-                    <div className={styles.button} onClick={speedUp}>
-                        <PlusIcon />
-                    </div>
-                </div>
+                <MinusIcon className={styles.button} onClick={speedDownHanlder} />
+                <div className={styles.wordsPerMinute}>{wordsPerMinute} <br /> word/m</div>
+                <PlusIcon className={styles.button} onClick={speedUpHanlder} />
             </div>
-            <div>
-                <div>Read</div>
-                <div>{completed} %</div>
+            <div className={styles.stats}>
+                <div className={styles.bar} style={{ '--total': `${completed}%` } as any} />
+                <div className={styles.bottom}>
+                    <div>{ttr}</div>
+                    <div>{completed}%</div>
+                </div>
             </div>
         </div>
     );
