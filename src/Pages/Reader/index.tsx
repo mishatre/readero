@@ -114,9 +114,11 @@ const Reader = () => {
 
     const [rawBookText, setRawBookText] = useState<string>('');
     const [bookText, setBookText] = useState<string[]>([]);
+    const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
     const { id } = useParams<{ id: string }>();
-    const { loaded, getBookContent } = useStorageContext();
+    const { loaded, getBookContent, saveCurrentWordIndex } =
+        useStorageContext();
 
     const [title, setTitle] = useState('');
 
@@ -124,21 +126,25 @@ const Reader = () => {
         if (!loaded) {
             return;
         }
-        getBookContent(id).then(({ info, content }) => {
+        getBookContent(id).then(({ info, content, currentWordIndex }) => {
             setTitle(info.title);
             setRawBookText(content);
             setBookText(content.split(' '));
+            setCurrentWordIndex(currentWordIndex || 0);
         });
     }, [loaded, id]);
 
     const [speed, setSpeed] = useState(320);
     const [isPlaying, setPlaying] = useState(false);
-    const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
     const { start, stop } = useAccurateTimer({
         delay: (60 / speed) * 1000,
         callback: () => {
-            setCurrentWordIndex((v) => v + 1);
+            setCurrentWordIndex((v) => {
+                const newIndex = v + 1;
+                saveCurrentWordIndex(id, newIndex);
+                return newIndex;
+            });
         },
     });
 

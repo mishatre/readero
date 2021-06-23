@@ -1,16 +1,27 @@
 .container {
-    overflow: hidden;
-    .textContainer {
-        overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
-        .text {
-        }
-    }
+    overflow: hidden;
 
     .textPlayer {
+        overflow-y: scroll;
+
         display: flex;
         justify-content: center;
         align-items: center;
         font-size: 24px;
+
+        .text {
+            height: 100%;
+            .selected {
+                color: red;
+            }
+        }
+
+        &.playing {
+            overflow-y: unset;
+        }
     }
 }

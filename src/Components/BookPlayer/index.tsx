@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+import cn from 'classnames';
 import SingleWordRender from '../SingleWordRender';
 import styles from './styles.module.scss';
 
@@ -9,6 +11,34 @@ interface IBookPlayerProps {
     onPlayerClick: () => void;
 }
 
+const clamp = (min: number, val: number, max: number) =>
+    Math.max(min, Math.min(val, max));
+
+const BookPart = ({
+    bookText,
+    currentWordIndex,
+}: {
+    bookText: string[];
+    currentWordIndex: number;
+}) => {
+    const startIndex = Math.max(0, currentWordIndex - 100);
+    const stopIndex = Math.min(currentWordIndex + 100, bookText.length);
+
+    const leftPart = bookText.slice(startIndex, currentWordIndex - 1).join(' ');
+    const rightPart = bookText.slice(currentWordIndex + 1, stopIndex).join(' ');
+    console.log(bookText[currentWordIndex]);
+    return (
+        <div className={styles.text}>
+            {leftPart}
+            <span className={styles.selected}>
+                {' '}
+                {bookText[currentWordIndex]}{' '}
+            </span>
+            {rightPart}
+        </div>
+    );
+};
+
 const BookPlayer = ({
     isPlaying,
     rawBookText,
@@ -16,18 +46,29 @@ const BookPlayer = ({
     currentWordIndex,
     onPlayerClick,
 }: IBookPlayerProps) => {
+    const onClickHandler = useCallback(() => {
+        if (isPlaying) {
+            onPlayerClick();
+        }
+    }, [isPlaying, onPlayerClick]);
+
     return (
         <div className={styles.container}>
-            {!isPlaying && (
-                <div className={styles.textContainer}>
-                    <div className={styles.text}>{rawBookText}</div>
-                </div>
-            )}
-            {isPlaying && (
-                <div className={styles.textPlayer} onClick={onPlayerClick}>
+            <div
+                className={cn(styles.textPlayer, {
+                    [styles.playing]: isPlaying,
+                })}
+                onClick={onClickHandler}
+            >
+                {isPlaying ? (
                     <SingleWordRender word={bookText[currentWordIndex]} />
-                </div>
-            )}
+                ) : (
+                    <BookPart
+                        bookText={bookText}
+                        currentWordIndex={currentWordIndex}
+                    />
+                )}
+            </div>
         </div>
     );
 };

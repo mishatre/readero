@@ -38,9 +38,13 @@ interface IStorageContext {
     addBook: (bookInfo: any) => void;
     removeBook: (id: string) => void;
 
-    getBookContent: (
-        id: string
-    ) => Promise<{ info: IBookInfo; content: string }>;
+    getBookContent: (id: string) => Promise<{
+        info: IBookInfo;
+        content: string;
+        currentWordIndex: number;
+    }>;
+
+    saveCurrentWordIndex: (id: string, index: number) => void;
 }
 
 const defaultSettings = {
@@ -98,13 +102,24 @@ const StorageProvider = ({ children }: IStorageProviderProps) => {
             const content = (await localforage.getItem(id)) as string;
             const info = library.find((item) => item.id === id)!;
 
+            const currentWordIndex = (await getCurrentWordIndex(id)) || 0;
+
             return {
                 info,
                 content,
+                currentWordIndex,
             };
         },
         [library]
     );
+
+    const getCurrentWordIndex = useCallback((id: string) => {
+        return localforage.getItem(`${id}_index`) as unknown as number;
+    }, []);
+
+    const saveCurrentWordIndex = useCallback((id: string, index: number) => {
+        localforage.setItem(`${id}_index`, index);
+    }, []);
 
     useEffect(() => {
         loadSettings();
@@ -123,6 +138,8 @@ const StorageProvider = ({ children }: IStorageProviderProps) => {
                 removeBook,
 
                 getBookContent,
+
+                saveCurrentWordIndex,
             }}
         >
             {children}
