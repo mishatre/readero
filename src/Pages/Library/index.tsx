@@ -7,6 +7,7 @@ import useFileInput from '../../hooks/useFileInput';
 import { useCallback } from 'react';
 
 import { ReactComponent as PlusIcon } from '../../assets/icons/plus-solid.svg';
+import epubToTxt from '../../Libraries/epubToTxt';
 
 const Library = () => {
     const { library, settings, addBook } = useStorageContext();
@@ -17,18 +18,15 @@ const Library = () => {
         }
 
         const selectedFile = files[0];
-        const epub = new EPub(selectedFile);
-        epub.parse().then((res) => {
-            if (!epub.metadata.id) {
+        epubToTxt(selectedFile).then((data: any) => {
+            if (!data.metadata.id) {
                 return;
             }
 
             addBook({
-                id: epub.metadata.id,
-                title: epub.metadata.title,
-                author: epub.metadata.creator,
-                cover: epub.cover || undefined,
-                content: epub.compiled,
+                ...data.metadata,
+                cover: data.cover || undefined,
+                content: data.content,
             });
         });
     });

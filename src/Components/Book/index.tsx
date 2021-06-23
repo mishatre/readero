@@ -21,20 +21,22 @@ function Book({ book, stats, onClick }: IBookProps) {
     return (
         <Link to={`/book/${book.id}`} className={styles.container}>
             <div
-                className={cn(styles.book, { [styles.nocover]: !book.cover })}
+                className={cn(styles.book, {
+                    [styles.nocover]: !book.cover,
+                    [styles.cover]: book.cover,
+                })}
                 style={
                     book.cover
-                        ? {
-                            background: `url(${book.cover})`,
-                            backgroundSize: 'cover',
-                        }
+                        ? ({ '--cover': `url(${book.cover})` } as any)
                         : {}
                 }
             >
-                <div className={styles.bookWrapper}>
-                    <div className={styles.title}>{book.title}</div>
-                    <div className={styles.author}>{book.author}</div>
-                </div>
+                {!book.cover && (
+                    <div className={styles.bookWrapper}>
+                        <div className={styles.title}>{book.title}</div>
+                        <div className={styles.author}>{book.author}</div>
+                    </div>
+                )}
             </div>
             <div className={styles.bottom}>
                 <div>

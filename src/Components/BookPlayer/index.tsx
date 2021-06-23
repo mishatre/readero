@@ -26,7 +26,7 @@ const BookPart = ({
 
     const leftPart = bookText.slice(startIndex, currentWordIndex - 1).join(' ');
     const rightPart = bookText.slice(currentWordIndex + 1, stopIndex).join(' ');
-    console.log(bookText[currentWordIndex]);
+
     return (
         <div className={styles.text}>
             {leftPart}
@@ -53,12 +53,11 @@ const BookPlayer = ({
     }, [isPlaying, onPlayerClick]);
 
     return (
-        <div className={styles.container}>
+        <div className={styles.container} onClick={onClickHandler}>
             <div
                 className={cn(styles.textPlayer, {
                     [styles.playing]: isPlaying,
                 })}
-                onClick={onClickHandler}
             >
                 {isPlaying ? (
                     <SingleWordRender word={bookText[currentWordIndex]} />

@@ -45,6 +45,7 @@ interface IStorageContext {
     }>;
 
     saveCurrentWordIndex: (id: string, index: number) => void;
+    saveCurrentSpeed: (speed: number) => void;
 }
 
 const defaultSettings = {
@@ -72,6 +73,15 @@ const StorageProvider = ({ children }: IStorageProviderProps) => {
 
     const loadLibrary = useCallback(async () => {
         const data = await localforage.getItem('library');
+        for (let item of (data || []) as any) {
+            const coverBlob = await localforage.getItem(`${item.id}_cover`);
+            if (coverBlob) {
+                (item as any).cover = URL.createObjectURL(coverBlob);
+            }
+        }
+
+        console.log(data);
+
         setLibrary((data as any) || []);
         setLoaded(true);
     }, []);
@@ -87,11 +97,15 @@ const StorageProvider = ({ children }: IStorageProviderProps) => {
 
             const { content, cover, ...info } = bookInfo;
 
-            const updatedLibrary = [...library, info];
-            await localforage.setItem('library', updatedLibrary);
-            setLibrary(updatedLibrary);
+            await localforage.setItem('library', [...library, info]);
+            setLibrary([...library, { ...info, cover }]);
 
             await localforage.setItem(bookInfo.id, content);
+            if (cover) {
+                const coverFetchResponse = await fetch(cover);
+                const coverBlob = await coverFetchResponse.blob();
+                await localforage.setItem(`${bookInfo.id}_cover`, coverBlob);
+            }
         },
         [library]
     );
@@ -121,6 +135,17 @@ const StorageProvider = ({ children }: IStorageProviderProps) => {
         localforage.setItem(`${id}_index`, index);
     }, []);
 
+    const saveCurrentSpeed = useCallback(
+        (newSpeed: number) => {
+            localforage.setItem(`settings`, {
+                ...settings,
+                wordsPerMinute: newSpeed,
+            });
+            setSettings({ ...settings, wordsPerMinute: newSpeed });
+        },
+        [settings]
+    );
+
     useEffect(() => {
         loadSettings();
         loadLibrary();
@@ -140,6 +165,7 @@ const StorageProvider = ({ children }: IStorageProviderProps) => {
                 getBookContent,
 
                 saveCurrentWordIndex,
+                saveCurrentSpeed,
             }}
         >
             {children}

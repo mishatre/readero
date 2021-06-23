@@ -11,7 +11,7 @@ import ReaderControls from '../../Components/ReaderControls';
 
 interface TimerOptions {
     delay: number;
-    callback: () => void;
+    callback: () => void | number;
 }
 
 /** Milliseconds representing forever in the future. */
@@ -58,10 +58,11 @@ function useAccurateTimer(options: TimerOptions) {
             if (overdueCalls % 2 !== 1) {
                 // If the timer is up...
                 if (now >= nextFireTime) {
+                    let userDelay = 0;
                     // Call the callback
                     if (typeof options.callback === 'function') {
                         try {
-                            options.callback();
+                            userDelay = options.callback() || 0;
                         } catch (e) {
                             console.error(e);
                         }
@@ -70,7 +71,10 @@ function useAccurateTimer(options: TimerOptions) {
                     const overdueElapsedTime = overdueCalls * options.delay;
                     const newFireTime = Math.max(
                         now,
-                        nextFireTime + options.delay + overdueElapsedTime
+                        nextFireTime +
+                            options.delay +
+                            overdueElapsedTime +
+                            userDelay
                     );
                     setNextFireTime(newFireTime);
                     // Set a timeout to check and fire the timer when time's up
@@ -117,8 +121,13 @@ const Reader = () => {
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
     const { id } = useParams<{ id: string }>();
-    const { loaded, getBookContent, saveCurrentWordIndex } =
-        useStorageContext();
+    const {
+        loaded,
+        settings,
+        getBookContent,
+        saveCurrentWordIndex,
+        saveCurrentSpeed,
+    } = useStorageContext();
 
     const [title, setTitle] = useState('');
 
@@ -128,14 +137,19 @@ const Reader = () => {
         }
         getBookContent(id).then(({ info, content, currentWordIndex }) => {
             setTitle(info.title);
+            // console.log(content);
             setRawBookText(content);
-            setBookText(content.split(' '));
+            setBookText(content.replaceAll('\n', ' ').split(' '));
             setCurrentWordIndex(currentWordIndex || 0);
         });
     }, [loaded, id]);
 
-    const [speed, setSpeed] = useState(320);
+    const [speed, setSpeed] = useState(settings.wordsPerMinute);
     const [isPlaying, setPlaying] = useState(false);
+
+    useEffect(() => {
+        setSpeed(settings.wordsPerMinute);
+    }, [settings.wordsPerMinute]);
 
     const { start, stop } = useAccurateTimer({
         delay: (60 / speed) * 1000,
@@ -145,6 +159,10 @@ const Reader = () => {
                 saveCurrentWordIndex(id, newIndex);
                 return newIndex;
             });
+            console.log(
+                Math.max(0, bookText[currentWordIndex + 1].length - 10) * 20
+            );
+            return Math.max(0, bookText[currentWordIndex + 1].length - 10) * 20;
         },
     });
 
@@ -162,8 +180,20 @@ const Reader = () => {
         [start, stop]
     );
 
-    const speedUp = useCallback(() => setSpeed((curr) => curr + 20), []);
-    const speedDown = useCallback(() => setSpeed((curr) => curr - 20), []);
+    const speedUp = useCallback(() => {
+        setSpeed((curr) => {
+            const newSpeed = curr + 20;
+            return newSpeed;
+        });
+        saveCurrentSpeed(speed + 20);
+    }, [speed]);
+    const speedDown = useCallback(() => {
+        setSpeed((curr) => {
+            const newSpeed = curr - 20;
+            return newSpeed;
+        });
+        saveCurrentSpeed(speed - 20);
+    }, [speed]);
 
     const onPlayerClick = useCallback(() => {
         togglePlay();
@@ -175,11 +205,13 @@ const Reader = () => {
 
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
-                <AngleLeft onClick={goBack} />
-                <div className={styles.title}>{title}</div>
-                <CogIcon />
-            </div>
+            {!isPlaying && (
+                <div className={styles.header}>
+                    <AngleLeft onClick={goBack} />
+                    <div className={styles.title}>{title}</div>
+                    <CogIcon />
+                </div>
+            )}
             <BookPlayer
                 isPlaying={isPlaying}
                 bookText={bookText}
@@ -187,15 +219,17 @@ const Reader = () => {
                 rawBookText={rawBookText}
                 onPlayerClick={onPlayerClick}
             />
-            <ReaderControls
-                isPlaying={isPlaying}
-                currentIndex={currentWordIndex}
-                speedDown={speedDown}
-                speedUp={speedUp}
-                togglePlay={togglePlay}
-                wordsCount={bookText.length}
-                wordsPerMinute={speed}
-            />
+            {!isPlaying && (
+                <ReaderControls
+                    isPlaying={isPlaying}
+                    currentIndex={currentWordIndex}
+                    speedDown={speedDown}
+                    speedUp={speedUp}
+                    togglePlay={togglePlay}
+                    wordsCount={bookText.length}
+                    wordsPerMinute={speed}
+                />
+            )}
         </div>
     );
 };

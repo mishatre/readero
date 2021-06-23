@@ -7,20 +7,26 @@
         width: 150px;
         height: 225px;
 
-        background: linear-gradient(
-                to right,
-                rgb(60, 13, 20) 3px,
-                rgba(255, 255, 255, 0.5) 5px,
-                rgba(255, 255, 255, 0.25) 6px,
-                rgba(255, 255, 255, 0.25) 8px,
-                transparent 10px,
-                transparent 11px,
-                rgba(255, 255, 255, 0.25) 14px,
-                transparent 16px
-            );
-            // url(https://images-na.ssl-images-amazon.com/images/I/51pnouuPO5L.jpg);
+        &.cover {
+            background: linear-gradient(
+                    to right,
+                    rgb(60, 13, 20) 3px,
+                    rgba(255, 255, 255, 0.5) 5px,
+                    rgba(255, 255, 255, 0.25) 6px,
+                    rgba(255, 255, 255, 0.25) 8px,
+                    transparent 10px,
+                    transparent 11px,
+                    rgba(255, 255, 255, 0.25) 14px,
+                    transparent 16px
+                ),
+                var(--cover);
+            background-size: contain;
+        }
 
-        background-size: contain;
+        &.nocover {
+            // background: linear-gradient(rgb(170, 169, 169) 0.5%, #9198e5);
+        }
+
         box-shadow: 0 0 13px -2px black,
             inset -1px 1px 2px rgba(255, 255, 255, 0.5);
         margin: auto;
@@ -46,10 +52,6 @@
                 padding-bottom: 10px;
                 color: black;
             }
-        }
-
-        &.nocover {
-            // background: linear-gradient(rgb(170, 169, 169) 0.5%, #9198e5);
         }
     }
 

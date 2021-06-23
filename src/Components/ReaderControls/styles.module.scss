@@ -1,4 +1,5 @@
 .container {
+    grid-area: bottom;
 
     padding: 12px 24px 12px 24px;
     box-shadow: 0px 0px 40px black;
@@ -36,7 +37,6 @@
             font-weight: bold;
             text-align: center;
         }
-
     }
 
     .stats {
@@ -62,7 +62,6 @@
             display: flex;
             justify-content: space-between;
         }
-
     }
 
     // border-top: 1px solid #333;
