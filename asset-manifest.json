@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/readero/static/css/main.f9c918e7.chunk.css",
+    "main.js": "/readero/static/js/main.a273be3f.chunk.js",
+    "main.js.map": "/readero/static/js/main.a273be3f.chunk.js.map",
+    "runtime-main.js": "/readero/static/js/runtime-main.63b5b8a3.js",
+    "runtime-main.js.map": "/readero/static/js/runtime-main.63b5b8a3.js.map",
+    "static/js/2.1fd9158f.chunk.js": "/readero/static/js/2.1fd9158f.chunk.js",
+    "static/js/2.1fd9158f.chunk.js.map": "/readero/static/js/2.1fd9158f.chunk.js.map",
+    "static/js/3.9a042c12.chunk.js": "/readero/static/js/3.9a042c12.chunk.js",
+    "static/js/3.9a042c12.chunk.js.map": "/readero/static/js/3.9a042c12.chunk.js.map",
+    "index.html": "/readero/index.html",
+    "static/css/main.f9c918e7.chunk.css.map": "/readero/static/css/main.f9c918e7.chunk.css.map",
+    "static/js/2.1fd9158f.chunk.js.LICENSE.txt": "/readero/static/js/2.1fd9158f.chunk.js.LICENSE.txt",
+    "static/media/angle-left-solid.e6b3ab3d.svg": "/readero/static/media/angle-left-solid.e6b3ab3d.svg",
+    "static/media/cog-solid.540ab5dc.svg": "/readero/static/media/cog-solid.540ab5dc.svg",
+    "static/media/minus-solid.4d0790fe.svg": "/readero/static/media/minus-solid.4d0790fe.svg",
+    "static/media/pause-solid.9df23b01.svg": "/readero/static/media/pause-solid.9df23b01.svg",
+    "static/media/play-solid.3c7578b0.svg": "/readero/static/media/play-solid.3c7578b0.svg",
+    "static/media/plus-solid.c82024f4.svg": "/readero/static/media/plus-solid.c82024f4.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.63b5b8a3.js",
+    "static/js/2.1fd9158f.chunk.js",
+    "static/css/main.f9c918e7.chunk.css",
+    "static/js/main.a273be3f.chunk.js"
+  ]
+}
