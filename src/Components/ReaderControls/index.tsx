@@ -45,6 +45,10 @@ const ReaderControls = ({
         speedUp();
     }, [speedUp]);
 
+    if(isPlaying) {
+        return null;
+    }
+
     return (
         <div className={styles.container} onClick={togglePlay}>
             <div className={styles.topLine} />

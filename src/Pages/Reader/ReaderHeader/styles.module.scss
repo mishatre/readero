@@ -1,0 +1,26 @@
+
+.container {
+
+    grid-area: head;
+    height: 56px;
+
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    justify-content: space-between;
+    padding: 0 24px 0 16px;
+    align-items: center;
+
+    background-color: #fefefe;
+    border-bottom: 1px solid #eaeaea;
+
+    .title {
+        font-size: 18px;
+        text-align: center;
+    }
+
+    svg {
+        height: 24px;
+        width: 24px;
+    }
+
+}

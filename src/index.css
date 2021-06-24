@@ -1,3 +1,10 @@
+
+
+@font-face {
+  font-family: "Kazimir";
+  src: url("./assets/fonts/Kazimir.otf") format("otf");
+ }
+
 html, body {
   height: 100%;
   overflow: hidden;
@@ -6,7 +13,8 @@ html, body {
 }
 
 #root {
-  font-family: Helvetica, sans-serif;
+  font-family: Kazimir;
+  /* font-family: Helvetica, sans-serif; */
   user-select: none;
   position: absolute;
   top: env(safe-area-inset-top);

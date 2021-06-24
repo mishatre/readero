@@ -23,8 +23,24 @@
             background-size: contain;
         }
 
+        svg {
+            width: 100%;
+        }
+
         &.nocover {
-            // background: linear-gradient(rgb(170, 169, 169) 0.5%, #9198e5);
+            background: linear-gradient(
+                    to right,
+                    rgb(60, 13, 20) 3px,
+                    rgba(255, 255, 255, 0.5) 5px,
+                    rgba(255, 255, 255, 0.25) 6px,
+                    rgba(255, 255, 255, 0.25) 8px,
+                    transparent 10px,
+                    transparent 11px,
+                    rgba(255, 255, 255, 0.25) 14px,
+                    transparent 16px
+                ),
+                rgb(206, 121, 134);
+            background-size: contain;
         }
 
         box-shadow: 0 0 13px -2px black,
@@ -36,7 +52,7 @@
             flex-grow: 1;
 
             margin: 4px;
-            border: 1px solid #fff;
+            // border: 1px solid #fff;
 
             display: flex;
             flex-direction: column;
@@ -44,6 +60,7 @@
 
             .title {
                 padding-top: 10px;
+                padding-left: 16px;
                 color: black;
             }
 

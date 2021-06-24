@@ -1,6 +1,7 @@
 
 import { BrowserRouter as Router, } from 'react-router-dom';
-import StorageProvider from './Storage';
+import SettingsProvider from './Settings';
+import StorageProvider from './Library';
 
 interface IProvidersProps { 
     children: React.ReactNode;
@@ -9,9 +10,11 @@ interface IProvidersProps {
 const Providers = ({ children }: IProvidersProps) => {
     return (
         <Router>
-            <StorageProvider>
-                {children}
-            </StorageProvider>
+            <SettingsProvider>
+                <StorageProvider>
+                    {children}
+                </StorageProvider>
+            </SettingsProvider>
         </Router>
     )
 }

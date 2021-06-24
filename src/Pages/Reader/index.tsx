@@ -1,13 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { useStorageContext } from '../../Providers/Storage';
-
-import { ReactComponent as CogIcon } from '../../assets/icons/cog-solid.svg';
-import { ReactComponent as AngleLeft } from '../../assets/icons/angle-left-solid.svg';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useLibraryContext } from '../../Providers/Library';
 
 import styles from './styles.module.scss';
-import BookPlayer from '../../Components/BookPlayer';
+import VirtualBookPlayer from '../../Components/VirtualBookPlayer';
 import ReaderControls from '../../Components/ReaderControls';
+import ReaderHeader from './ReaderHeader';
+import { useSettingsContext } from '../../Providers/Settings';
+
+
 
 interface TimerOptions {
     delay: number;
@@ -114,36 +115,32 @@ function useAccurateTimer(options: TimerOptions) {
 }
 
 const Reader = () => {
-    const history = useHistory();
-
+    
     const [rawBookText, setRawBookText] = useState<string>('');
     const [bookText, setBookText] = useState<string[]>([]);
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
     const { id } = useParams<{ id: string }>();
+    const {settings, setWordsPerMinute } = useSettingsContext();
     const {
-        loaded,
-        settings,
+        // loaded,
         getBookContent,
         saveCurrentWordIndex,
-        saveCurrentSpeed,
-    } = useStorageContext();
+    } = useLibraryContext();
 
     const [title, setTitle] = useState('');
 
     useEffect(() => {
-        if (!loaded) {
-            return;
-        }
         getBookContent(id).then(({ info, content, currentWordIndex }) => {
             setTitle(info.title);
             // console.log(content);
             setRawBookText(content);
-            setBookText(content.replaceAll('\n', ' ').split(' '));
+            // setBookText(content.replaceAll('\n', ' ').split(' '));
+            setBookText(content as unknown as string[]);
             setCurrentWordIndex(currentWordIndex || 0);
         });
-    }, [loaded, id]);
-
+    }, [id]);
+   
     const [speed, setSpeed] = useState(settings.wordsPerMinute);
     const [isPlaying, setPlaying] = useState(false);
 
@@ -159,9 +156,9 @@ const Reader = () => {
                 saveCurrentWordIndex(id, newIndex);
                 return newIndex;
             });
-            console.log(
-                Math.max(0, bookText[currentWordIndex + 1].length - 10) * 20
-            );
+            // console.log(
+            //     Math.max(0, bookText[currentWordIndex + 1].length - 10) * 20
+            // );
             return Math.max(0, bookText[currentWordIndex + 1].length - 10) * 20;
         },
     });
@@ -183,53 +180,52 @@ const Reader = () => {
     const speedUp = useCallback(() => {
         setSpeed((curr) => {
             const newSpeed = curr + 20;
+            setWordsPerMinute(newSpeed);
             return newSpeed;
         });
-        saveCurrentSpeed(speed + 20);
-    }, [speed]);
+    }, [setWordsPerMinute]);
     const speedDown = useCallback(() => {
         setSpeed((curr) => {
             const newSpeed = curr - 20;
+            setWordsPerMinute(newSpeed);
             return newSpeed;
         });
-        saveCurrentSpeed(speed - 20);
-    }, [speed]);
+    }, [setWordsPerMinute]);
 
     const onPlayerClick = useCallback(() => {
         togglePlay();
     }, [togglePlay]);
 
-    const goBack = useCallback(() => {
-        history.goBack();
-    }, []);
+    
 
     return (
         <div className={styles.container}>
-            {!isPlaying && (
-                <div className={styles.header}>
-                    <AngleLeft onClick={goBack} />
-                    <div className={styles.title}>{title}</div>
-                    <CogIcon />
-                </div>
-            )}
-            <BookPlayer
+            <ReaderHeader 
+                isPlaying={isPlaying}
+                title={title} 
+            />
+            {!isPlaying && 
+                <VirtualBookPlayer
+                    sentences={bookText}
+                    currentIndex={0}
+                />
+            }
+            {/* <BookPlayer
                 isPlaying={isPlaying}
                 bookText={bookText}
                 currentWordIndex={currentWordIndex}
                 rawBookText={rawBookText}
                 onPlayerClick={onPlayerClick}
+            /> */}
+            <ReaderControls
+                isPlaying={isPlaying}
+                currentIndex={currentWordIndex}
+                speedDown={speedDown}
+                speedUp={speedUp}
+                togglePlay={togglePlay}
+                wordsCount={bookText.length}
+                wordsPerMinute={speed}
             />
-            {!isPlaying && (
-                <ReaderControls
-                    isPlaying={isPlaying}
-                    currentIndex={currentWordIndex}
-                    speedDown={speedDown}
-                    speedUp={speedUp}
-                    togglePlay={togglePlay}
-                    wordsCount={bookText.length}
-                    wordsPerMinute={speed}
-                />
-            )}
         </div>
     );
 };

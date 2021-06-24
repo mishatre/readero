@@ -1,34 +1,21 @@
 import Book from '../../Components/Book';
 import styles from './styles.module.scss';
-import EPub from '../../Libraries/epub';
 
-import { useStorageContext } from '../../Providers/Storage';
+import { useLibraryContext } from '../../Providers/Library';
 import useFileInput from '../../hooks/useFileInput';
 import { useCallback } from 'react';
 
 import { ReactComponent as PlusIcon } from '../../assets/icons/plus-solid.svg';
-import epubToTxt from '../../Libraries/epubToTxt';
 
 const Library = () => {
-    const { library, settings, addBook } = useStorageContext();
+    const { library, loadBook } = useLibraryContext();
 
     const onAdd = useFileInput({}, (files: File[]) => {
         if (files.length === 0) {
             return;
         }
-
         const selectedFile = files[0];
-        epubToTxt(selectedFile).then((data: any) => {
-            if (!data.metadata.id) {
-                return;
-            }
-
-            addBook({
-                ...data.metadata,
-                cover: data.cover || undefined,
-                content: data.content,
-            });
-        });
+        loadBook(selectedFile);        
     });
 
     const onBookClick = useCallback((id: string) => {}, []);

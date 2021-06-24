@@ -1,8 +1,41 @@
 import JsZip from 'jszip';
 import parser from 'fast-xml-parser';
+import SentenceTokenizer from './SentenceTokenizer';
+
+type AnyEntries<T> = {
+    [K in keyof T]: [K, unknown];
+}[keyof T][];
 
 const zip = new JsZip();
 const domParser = new DOMParser();
+
+interface IEpubXMLMetadata {
+    identifier: string | {};
+    title: string;
+    language: string;
+
+    publisher?: string;
+    language?: string;
+    title?: string;
+    subject?: string;
+    description?: string;
+    creator?: string;
+    date?: string;
+    ISBN?: string;
+    UUID?: string;
+}
+
+interface IEpubMetadata {
+    id: string;
+    publisher?: string;
+    language?: string;
+    title?: string;
+    subject?: string;
+    description?: string;
+    creator?: string;
+    date?: string;
+}
+
 
 function findFile(archive: JsZip, filename: string) {
     if (archive.files[filename]) {
@@ -70,10 +103,46 @@ async function validateRootFile(archive: JsZip) {
 async function parseRootFile(archive: JsZip, rootFile: JsZip.JSZipObject) {
     const text = await rootFile.async('text');
     const XMLData = parser.parse(text, {
+        attributeNamePrefix: '',
+        attrNodeName: 'attr',
+        textNodeName: 'value',
         ignoreAttributes: false,
         ignoreNameSpace: true,
-        attributeNamePrefix: '',
+        parseAttributeValue: true,
     });
+
+    const metadata: Partial<IEpubMetadata> = {};
+
+    const uidName = XMLData.package.attr['unique-identifier'];
+
+    for(const [key, val] of Object.entries(XMLData.package.metadata) || [] as AnyEntries<IEpubMetadata>) {
+        if(val) {
+            let parsedValue = null;
+            if(key === 'identifier') {
+                parsedValue = val;
+                if(Array.isArray(val)) {
+                    parsedValue = val.find((item) => item.attr.id === uidName);
+                }
+                if(parsedValue) {
+                    parsedValue = String(parsedValue).replace('urn:uuid:', '').toUpperCase().trim();
+                } else {
+                    throw new Error('Cannot determine book unique identifier');
+                }
+            } else {
+                if(typeof val === 'object') {
+                    // TODO: Do better typings
+                    parsedValue = (val as any).value;
+                } else {
+                    parsedValue = val;
+                }
+                metadata[key as keyof IEpubMetadata] = parsedValue;
+            }
+        }
+    }
+
+    console.log(metadata);
+    
+
 
     const epubData = [];
 
@@ -94,19 +163,26 @@ async function parseRootFile(archive: JsZip, rootFile: JsZip.JSZipObject) {
 //
 
 async function parseMetadata(value: any) {
+    console.log(1);
+    console.log(value)
     const metadata: any = {};
     if (Array.isArray(value.identifier)) {
         for (const item of value.identifier) {
-            metadata.id = item['#text'];
+            metadata.id = String(item['#text']);
             break;
         }
     } else {
-        metadata.id = value.identifier['#text'];
+        metadata.id = String(value.identifier['#text']);
     }
 
     metadata.id = metadata.id.replace('urn:uuid:', '');
 
     metadata.creator = value.creator;
+
+    if(typeof metadata.creator === 'object') {
+        metadata.creator = metadata.creator['#text'];
+    }
+
     metadata.title = value.title;
 
     return {
@@ -145,7 +221,7 @@ async function parseContent(
 
         const file = findFile(archive, href!);
         const r = await file?.async('text');
-        const text = new DOMParser().parseFromString(
+        const text = domParser.parseFromString(
             r!,
             'application/xhtml+xml'
         ).documentElement.textContent;
@@ -197,7 +273,6 @@ async function parseGuide(
         (item: any) => item.href === value.reference.href
     );
     data = data.slice(0, data.size, foundDescription['media-type']);
-    // console.log(foundDescription);
     return {
         key: 'cover',
         value: URL.createObjectURL(data),
@@ -215,7 +290,7 @@ function compileContent(items: string[]) {
         compiledText.push(...sentences);
     }
 
-    return compiledText.join(' ');
+    return SentenceTokenizer.tokenize(compiledText.join(' '));
 }
 
 async function epubToTxt(blob: Blob) {
@@ -237,6 +312,8 @@ async function epubToTxt(blob: Blob) {
     const content = compileContent((parsedEpub as any).items);
     delete (parsedEpub as any).items;
     (parsedEpub as any).content = content;
+
+    // console.log(content)
 
     return parsedEpub;
 }
