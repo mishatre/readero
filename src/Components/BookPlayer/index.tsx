@@ -2,63 +2,50 @@ import { useCallback } from 'react';
 import cn from 'classnames';
 import SingleWordRender from '../SingleWordRender';
 import styles from './styles.module.scss';
+import useAccurateTimer from '../../hooks/useAccurateTimer';
+import { useSettingsContext } from '../../Providers/Settings';
 
 interface IBookPlayerProps {
     isPlaying: boolean;
     bookText: string[];
     currentWordIndex: number;
     onPlayerClick: () => void;
+    onTick: () => number;
 }
-
-const clamp = (min: number, val: number, max: number) =>
-    Math.max(min, Math.min(val, max));
-
-const BookPart = ({
-    bookText,
-    currentWordIndex,
-}: {
-    bookText: string[];
-    currentWordIndex: number;
-}) => {
-    const startIndex = Math.max(0, currentWordIndex - 100);
-    const stopIndex = Math.min(currentWordIndex + 100, bookText.length);
-
-    const leftPart = bookText.slice(startIndex, currentWordIndex - 1).join(' ');
-    const rightPart = bookText.slice(currentWordIndex + 1, stopIndex).join(' ');
-
-    return (
-        <div className={styles.text}>
-            {leftPart}
-            <span className={styles.selected}>
-                {' '}
-                {bookText[currentWordIndex]}{' '}
-            </span>
-            {rightPart}
-        </div>
-    );
-};
 
 const BookPlayer = ({
     isPlaying,
     bookText,
     currentWordIndex,
     onPlayerClick,
+    onTick,
 }: IBookPlayerProps) => {
+    const { settings } = useSettingsContext();
+
     const onClickHandler = useCallback(() => {
         if (isPlaying) {
             onPlayerClick();
         }
     }, [isPlaying, onPlayerClick]);
 
+    const onTimer = useCallback(() => {
+        const newWordIndex = onTick();
+        return Math.max(0, bookText[newWordIndex].length - 10) * 20;
+    }, [onTick, bookText]);
+
+    const delay = (60 / settings.wordsPerMinute) * 1000;
+    useAccurateTimer(isPlaying, delay, onTimer);
+
     return (
-        <div className={styles.container} onClick={onClickHandler}>
-            <div
-                className={cn(styles.textPlayer, {
-                    [styles.playing]: isPlaying,
-                })}
-            >
-                <SingleWordRender word={bookText[currentWordIndex]} />
-            </div>
+        <div
+            className={styles.container}
+            style={{
+                fontFamily: settings.font,
+                fontSize: `${settings.fontSize}px`,
+            }}
+            onClick={onClickHandler}
+        >
+            <SingleWordRender word={bookText[currentWordIndex]} />
         </div>
     );
 };

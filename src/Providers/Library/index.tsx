@@ -42,7 +42,7 @@ interface ILibraryContext {
 const [useLibraryContext, Provider] = createCtx<ILibraryContext>();
 
 const LibraryProvider = ({ children }: ILibraryProviderProps) => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [library, setLibrary] = useState<IBookInfo[]>([]);
 
     useEffect(() => {

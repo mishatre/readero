@@ -10,8 +10,7 @@ import { useCallback } from 'react';
 interface IReaderControlsProps {
     isPlaying: boolean;
 
-    speedDown: () => void;
-    speedUp: () => void;
+    onChangeSpeed: (inc: number) => void;
     togglePlay: () => void;
 
     wordsCount: number;
@@ -22,9 +21,8 @@ interface IReaderControlsProps {
 const ReaderControls = ({
     isPlaying,
 
-    speedDown,
-    speedUp,
     togglePlay,
+    onChangeSpeed,
 
     wordsCount,
     currentIndex,
@@ -33,19 +31,25 @@ const ReaderControls = ({
     const completed = completionRate(wordsCount, currentIndex);
     const ttr = timeToRead(wordsCount, currentIndex, wordsPerMinute);
 
-    const speedDownHanlder = useCallback((e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        speedDown();
-    }, [speedDown]);
+    const speedDownHanlder = useCallback(
+        (e: React.MouseEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onChangeSpeed(-20);
+        },
+        [onChangeSpeed]
+    );
 
-    const speedUpHanlder = useCallback((e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        speedUp();
-    }, [speedUp]);
+    const speedUpHanlder = useCallback(
+        (e: React.MouseEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onChangeSpeed(20);
+        },
+        [onChangeSpeed]
+    );
 
-    if(isPlaying) {
+    if (isPlaying) {
         return null;
     }
 
@@ -53,12 +57,20 @@ const ReaderControls = ({
         <div className={styles.container} onClick={togglePlay}>
             <div className={styles.topLine} />
             <div className={styles.controls}>
-                <MinusIcon className={styles.button} onClick={speedDownHanlder} />
-                <div className={styles.wordsPerMinute}>{wordsPerMinute} <br /> word/m</div>
+                <MinusIcon
+                    className={styles.button}
+                    onClick={speedDownHanlder}
+                />
+                <div className={styles.wordsPerMinute}>
+                    {wordsPerMinute} <br /> word/m
+                </div>
                 <PlusIcon className={styles.button} onClick={speedUpHanlder} />
             </div>
             <div className={styles.stats}>
-                <div className={styles.bar} style={{ '--total': `${completed}%` } as any} />
+                <div
+                    className={styles.bar}
+                    style={{ '--total': `${completed}%` } as any}
+                />
                 <div className={styles.bottom}>
                     <div>{ttr}</div>
                     <div>{completed}%</div>

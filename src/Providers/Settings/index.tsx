@@ -27,7 +27,7 @@ export interface ISettings {
 
 const defaultSettings = {
     font: 'Kazemir',
-    fontSize: 16,
+    fontSize: 48,
     wordsPerMinute: 320,
     useORP: true,
     slowDownOnLongWords: true,
