@@ -39,9 +39,12 @@
 
         .list {
             display: grid;
-            grid-template-columns: max-content max-content;
-            grid-auto-rows: max-content;
-            grid-row-gap: 20px;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(calc(100% / 4 - 20px), 1fr)
+            );
+
+            grid-gap: 20px;
 
             align-content: space-around;
             justify-content: space-around;

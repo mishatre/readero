@@ -1,14 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useLibraryContext } from '../../Providers/Library';
+import { IBookInfo, useLibraryContext } from '../../Providers/Library';
 
 import styles from './styles.module.scss';
 import VirtualBookPlayer from '../../Components/VirtualBookPlayer';
+import BookPlayer from '../../Components/BookPlayer';
 import ReaderControls from '../../Components/ReaderControls';
 import ReaderHeader from './ReaderHeader';
 import { useSettingsContext } from '../../Providers/Settings';
-
-
+import {
+    IBookStat,
+    useReadingStatsContext,
+} from '../../Providers/ReadingStats';
 
 interface TimerOptions {
     delay: number;
@@ -115,51 +118,43 @@ function useAccurateTimer(options: TimerOptions) {
 }
 
 const Reader = () => {
-    
-    const [rawBookText, setRawBookText] = useState<string>('');
-    const [bookText, setBookText] = useState<string[]>([]);
-    const [currentWordIndex, setCurrentWordIndex] = useState(0);
-
     const { id } = useParams<{ id: string }>();
-    const {settings, setWordsPerMinute } = useSettingsContext();
-    const {
-        // loaded,
-        getBookContent,
-        saveCurrentWordIndex,
-    } = useLibraryContext();
 
-    const [title, setTitle] = useState('');
+    const { getBook } = useLibraryContext();
+    const {
+        getBookStats,
+        updateBookCurrentWordIndex,
+        setBookSentenceWordIndex,
+        setBookCurrentWordIndex,
+    } = useReadingStatsContext();
+    const { settings, updateWordsPerMinute } = useSettingsContext();
+
+    const [bookInfo, setBookInfo] = useState<IBookInfo>();
+    const [bookItems, setBookItems] = useState<string[]>([]);
+    const [bookText, setBookText] = useState<string[]>([]);
+    const [{ currentWordIndex, currentSentenceIndex }, setBookStat] =
+        useState<IBookStat>({ currentWordIndex: 0, currentSentenceIndex: 0 });
 
     useEffect(() => {
-        getBookContent(id).then(({ info, content, currentWordIndex }) => {
-            setTitle(info.title);
-            // console.log(content);
-            setRawBookText(content);
-            // setBookText(content.replaceAll('\n', ' ').split(' '));
-            setBookText(content as unknown as string[]);
-            setCurrentWordIndex(currentWordIndex || 0);
+        getBook(id).then(({ info, items }) => {
+            setBookStat(getBookStats(id));
+            setBookInfo(info);
+            setBookItems(items);
+            setBookText(items.join(' ').split(' '));
         });
     }, [id]);
-   
-    const [speed, setSpeed] = useState(settings.wordsPerMinute);
+
     const [isPlaying, setPlaying] = useState(false);
 
-    useEffect(() => {
-        setSpeed(settings.wordsPerMinute);
-    }, [settings.wordsPerMinute]);
-
     const { start, stop } = useAccurateTimer({
-        delay: (60 / speed) * 1000,
+        delay: (60 / settings.wordsPerMinute) * 1000,
         callback: () => {
-            setCurrentWordIndex((v) => {
-                const newIndex = v + 1;
-                saveCurrentWordIndex(id, newIndex);
-                return newIndex;
-            });
-            // console.log(
-            //     Math.max(0, bookText[currentWordIndex + 1].length - 10) * 20
-            // );
-            return Math.max(0, bookText[currentWordIndex + 1].length - 10) * 20;
+            const newWordIndex = updateBookCurrentWordIndex(id, 1);
+            setBookStat((prev) => ({
+                ...prev,
+                currentWordIndex: newWordIndex,
+            }));
+            return Math.max(0, bookText[newWordIndex].length - 10) * 20;
         },
     });
 
@@ -177,54 +172,60 @@ const Reader = () => {
         [start, stop]
     );
 
-    const speedUp = useCallback(() => {
-        setSpeed((curr) => {
-            const newSpeed = curr + 20;
-            setWordsPerMinute(newSpeed);
-            return newSpeed;
-        });
-    }, [setWordsPerMinute]);
-    const speedDown = useCallback(() => {
-        setSpeed((curr) => {
-            const newSpeed = curr - 20;
-            setWordsPerMinute(newSpeed);
-            return newSpeed;
-        });
-    }, [setWordsPerMinute]);
+    const speedUp = useCallback(
+        () => updateWordsPerMinute(20),
+        [updateWordsPerMinute]
+    );
+    const speedDown = useCallback(
+        () => updateWordsPerMinute(-20),
+        [updateWordsPerMinute]
+    );
 
     const onPlayerClick = useCallback(() => {
         togglePlay();
     }, [togglePlay]);
 
-    
+    const onSentenceClick = useCallback(
+        (index: number) => {
+            const newWordIndex =
+                bookItems.slice(0, index).join(' ').split(' ').length - 1;
+            setBookStat((prev) => ({
+                ...prev,
+                currentSentenceIndex: index,
+                currentWordIndex: newWordIndex,
+            }));
+            setBookSentenceWordIndex(id, index);
+            setBookCurrentWordIndex(id, newWordIndex);
+        },
+        [setBookSentenceWordIndex, bookItems, id]
+    );
 
     return (
         <div className={styles.container}>
-            <ReaderHeader 
-                isPlaying={isPlaying}
-                title={title} 
-            />
-            {!isPlaying && 
+            <ReaderHeader isPlaying={isPlaying} title={bookInfo?.title || ''} />
+            {!isPlaying && (
                 <VirtualBookPlayer
-                    sentences={bookText}
-                    currentIndex={0}
+                    sentences={bookItems}
+                    currentIndex={currentSentenceIndex}
+                    onSentenceClick={onSentenceClick}
                 />
-            }
-            {/* <BookPlayer
-                isPlaying={isPlaying}
-                bookText={bookText}
-                currentWordIndex={currentWordIndex}
-                rawBookText={rawBookText}
-                onPlayerClick={onPlayerClick}
-            /> */}
+            )}
+            {isPlaying && (
+                <BookPlayer
+                    isPlaying={isPlaying}
+                    bookText={bookText}
+                    currentWordIndex={currentWordIndex}
+                    onPlayerClick={onPlayerClick}
+                />
+            )}
             <ReaderControls
                 isPlaying={isPlaying}
                 currentIndex={currentWordIndex}
                 speedDown={speedDown}
                 speedUp={speedUp}
                 togglePlay={togglePlay}
-                wordsCount={bookText.length}
-                wordsPerMinute={speed}
+                wordsCount={bookItems.length}
+                wordsPerMinute={settings.wordsPerMinute}
             />
         </div>
     );

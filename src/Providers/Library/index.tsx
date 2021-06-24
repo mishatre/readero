@@ -11,45 +11,44 @@ interface ILibraryRecord {
     id: string;
     title: string;
     creator?: string;
-}
-
-export interface IBookInfo {    
-    id: string;
-    title: string;
-    creator: string;
     cover: boolean;
 
-    words: number;
-    sentences: number;
+    totalWords: number;
+    totalSentences: number;
+}
 
+export interface IBookInfo {
+    id: string;
+    title: string;
+    creator?: string;
+    cover: string | boolean;
+
+    totalWords: number;
+    totalSentences: number;
 }
 
 interface ILibraryContext {
-
     library: IBookInfo[];
 
-    loadBook: (file: Blob) => void;
-    removeBook: (id: string) => void;
+    loadBooks: (files: Blob[]) => void;
+    deleteBook: (id: string) => void;
 
-    getBookContent: (id: string) => Promise<{
+    getBook: (id: string) => Promise<{
         info: IBookInfo;
-        content: string;
-        currentWordIndex: number;
+        items: string[];
     }>;
-
-    saveCurrentWordIndex: (id: string, index: number) => void;
 }
 
 const [useLibraryContext, Provider] = createCtx<ILibraryContext>();
 
 const LibraryProvider = ({ children }: ILibraryProviderProps) => {
-
-    const [library, setLibrary] = useState<IBookInfo[] | null>();
+    const [isLoading, setIsLoading] = useState(false);
+    const [library, setLibrary] = useState<IBookInfo[]>([]);
 
     useEffect(() => {
         (async () => {
-            const data = await localforage.getItem<ILibraryRecord[]>('library');
-            setLibrary(data as any || []);
+            const data = await localforage.getItem<IBookInfo[]>('library');
+            setLibrary((data as any) || []);
 
             for (let item of (data || []) as any) {
                 const coverBlob = await localforage.getItem(`${item.id}_cover`);
@@ -57,91 +56,114 @@ const LibraryProvider = ({ children }: ILibraryProviderProps) => {
                     (item as any).cover = URL.createObjectURL(coverBlob);
                 }
             }
-        
-            
+            setIsLoading(false);
         })();
     }, []);
 
-    const bookExists = useCallback((id: string) => {
-        if(!library) {
-            return false;
-        }
-        return !!library.find((item) => item.id === id);
-    }, [library]);
+    // const bookExists = useCallback(
+    //     (id: string) => {
+    //         if (!library) {
+    //             return false;
+    //         }
+    //         return !!library.find((item) => item.id === id);
+    //     },
+    //     [library]
+    // );
 
     //
-    const loadBook = useCallback(async (file: Blob) => {
+    const loadBooks = useCallback(
+        async (files: Blob[]) => {
+            const parsedBooks = await Promise.all(
+                Array.from(files).map((file) => epubToTxt(file))
+            );
 
-        try {
-            const parsedEpub = await epubToTxt(file);
+            const loadedBooks = parsedBooks.map((book) => {
+                const totalWords = book.items.reduce(
+                    (acc, item) => acc + item.split(' ').length,
+                    0
+                );
 
-            // if (!parsedEpub.metadata.id) {
-            //     return;
-            // }
+                const bookInfo = {
+                    id: book.metadata.identifier,
+                    title: book.metadata.title || '',
+                    creator: book.metadata.creator || '',
+                    cover: !!book.cover,
 
-            // if (bookExists(parsedEpub.metadata.id)) {
-            //     console.log('Book already exist');
-            //     return;
-            // }
+                    totalWords,
+                    totalSentences: book.items.length,
+                };
 
-            // const { content, cover, ...info } = bookInfo;
-            // setLibrary([...library, { ...info, cover }]);
-            // await localforage.setItem('library', [...library, info]);
+                return {
+                    id: bookInfo.id,
+                    info: bookInfo,
+                    items: book.items,
+                    cover: book.cover,
+                    coverUrl: book.cover
+                        ? URL.createObjectURL(book.cover)
+                        : false,
+                };
+            });
 
-            // await localforage.setItem(bookInfo.id, content);
-            // if (cover) {
-            //     const coverFetchResponse = await fetch(cover);
-            //     const coverBlob = await coverFetchResponse.blob();
-            //     await localforage.setItem(`${bookInfo.id}_cover`, coverBlob);
-            // }
+            await Promise.all(
+                loadedBooks.map(({ id, items }) =>
+                    localforage.setItem(id, items)
+                )
+            );
 
-        } catch(error) {
-            console.log(error);
-        }
-    }, [library]);
+            console.log(loadedBooks);
 
-    const removeBook = useCallback((id: string) => {}, []);
+            const newLibrary = [
+                ...library,
+                ...loadedBooks.map(({ info }) => info),
+            ];
+            await localforage.setItem('library', newLibrary);
 
-    const getBookContent = useCallback(
+            await Promise.all(
+                loadedBooks
+                    .filter(({ cover }) => !!cover)
+                    .map(({ id, cover }) =>
+                        localforage.setItem(`${id}_cover`, cover)
+                    )
+            );
+
+            setLibrary([
+                ...library,
+                ...loadedBooks.map(({ info, coverUrl }) => ({
+                    ...info,
+                    cover: coverUrl,
+                })),
+            ]);
+        },
+        [library]
+    );
+
+    const deleteBook = useCallback((id: string) => {}, []);
+
+    const getBook = useCallback(
         async (id: string) => {
-            const content = (await localforage.getItem(id)) as string;
+            const items = (await localforage.getItem<string[]>(id)) || [];
             const info = library!.find((item) => item.id === id)!;
-
-            const currentWordIndex = (await getCurrentWordIndex(id)) || 0;
-
             return {
                 info,
-                content,
-                currentWordIndex,
+                items,
             };
         },
         [library]
     );
 
-    const getCurrentWordIndex = useCallback((id: string) => {
-        return localforage.getItem(`${id}_index`) as unknown as number;
-    }, []);
-
-    const saveCurrentWordIndex = useCallback((id: string, index: number) => {
-        localforage.setItem(`${id}_index`, index);
-    }, []);
-
-    if(!library) {
+    if (isLoading) {
         return null;
     }
 
     return (
         <Provider
             value={{
-
                 library,
 
-                loadBook,
-                removeBook,
+                loadBooks,
+                deleteBook,
 
-                getBookContent,
-
-                saveCurrentWordIndex,
+                getBook,
             }}
         >
             {children}

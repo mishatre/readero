@@ -12,6 +12,8 @@ interface IBookPlayerProps {
     fontSize?: number;
     sentences: string[];
     currentIndex: number;
+
+    onSentenceClick: (index: number) => void;
 }
 
 function measureFontHeight(fontName: string, fontSize: number) {
@@ -19,16 +21,16 @@ function measureFontHeight(fontName: string, fontSize: number) {
     // NB: NO CSS lineHeight value !
     let div = document.createElement('DIV');
     div.id = '__textMeasure';
-    div.innerHTML = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+    div.innerHTML = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ';
     div.style.position = 'absolute';
     div.style.top = '-500px';
     div.style.left = '0';
     div.style.fontFamily = fontName;
     div.style.fontSize = fontSize + 'px';
     document.body.appendChild(div);
-    
+
     const height = div.offsetHeight;
-    
+
     document.body.removeChild(div);
 
     return height;
@@ -36,21 +38,25 @@ function measureFontHeight(fontName: string, fontSize: number) {
 
 const SentenceRow = ({ style, data, index }: any) => {
     return (
-        <div 
-            className={cn(styles.sentenceRow, { [styles.selected]: index === data.currentIndex})} 
+        <div
+            className={cn(styles.sentenceRow, {
+                [styles.selected]: index === data.currentIndex,
+            })}
+            onClick={() => data.onSentenceClick(index)}
             style={style}
         >
             {data.sentences[index]}
         </div>
     );
-}
+};
 
 function useTester() {
     const el = document.createElement('div');
-    el.style.fontFamily = "Kazemir";
-    el.style.fontSize = "16px";
-    el.style.display="block";
-    el.innerText = "Today he was particularly nervous and worried because something had gone seriously wrong with his job,  which was to see that Arthur Dent’s house got cleared out of the  way before the day was out"
+    el.style.fontFamily = 'Kazemir';
+    el.style.fontSize = '16px';
+    el.style.display = 'block';
+    el.innerText =
+        'Today he was particularly nervous and worried because something had gone seriously wrong with his job,  which was to see that Arthur Dent’s house got cleared out of the  way before the day was out';
     // console.dir(window.getComputedStyle(el))
 }
 
@@ -59,8 +65,8 @@ const VirtualBookPlayer = ({
     fontSize = 16,
     sentences,
     currentIndex,
+    onSentenceClick,
 }: IBookPlayerProps) => {
-
     // TODO: Add chapter titles
     const [lineHeight, setLineHeight] = useState(fontSize);
     useEffect(() => {
@@ -70,22 +76,39 @@ const VirtualBookPlayer = ({
     useTester();
 
     const measureText = useTextMeasurer();
-    const getItemSize = useCallback((width: number, index: number) => {
-        // TODO: Not accurate
-        if(index === 2) {
-            console.log(Math.ceil(measureText(fontFamily, fontSize, sentences[index])) / width)
-        }
-        const itemHeight = Math.ceil((Math.ceil(measureText(fontFamily, fontSize, sentences[index]) / width) + 1) * lineHeight);
-        return itemHeight;
-    }, [sentences, fontSize, fontFamily, measureText]);
+    const getItemSize = useCallback(
+        (width: number, index: number) => {
+            // TODO: Not accurate
+            if (index === 2) {
+                console.log(
+                    Math.ceil(
+                        measureText(fontFamily, fontSize, sentences[index])
+                    ) / width
+                );
+            }
+            const itemHeight = Math.ceil(
+                (Math.ceil(
+                    measureText(fontFamily, fontSize, sentences[index]) / width
+                ) +
+                    1) *
+                    lineHeight
+            );
+            return itemHeight;
+        },
+        [sentences, fontSize, fontFamily, measureText]
+    );
 
-    const itemData = useMemo(() => ({
-        sentences,
-        currentIndex
-    }), [sentences, currentIndex]);
-    
+    const itemData = useMemo(
+        () => ({
+            sentences,
+            currentIndex,
+            onSentenceClick,
+        }),
+        [sentences, currentIndex, onSentenceClick]
+    );
+
     return (
-        <div 
+        <div
             className={styles.container}
             style={{
                 fontFamily: fontFamily,

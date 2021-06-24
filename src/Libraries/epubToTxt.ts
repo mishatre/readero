@@ -1,32 +1,84 @@
 import JsZip from 'jszip';
 import parser from 'fast-xml-parser';
+import mime from 'mime-types';
 import SentenceTokenizer from './SentenceTokenizer';
 
-type AnyEntries<T> = {
-    [K in keyof T]: [K, unknown];
+type PickByValue<T, V> = Pick<
+    T,
+    { [K in keyof T]: T[K] extends V ? K : never }[keyof T]
+>;
+type Entries<T> = {
+    [K in keyof T]: [keyof PickByValue<T, T[K]>, T[K]];
 }[keyof T][];
 
-const zip = new JsZip();
-const domParser = new DOMParser();
+type TEpubXMLIdentifier = {
+    value: string;
+    attr: {
+        id: string;
+    };
+};
 
 interface IEpubXMLMetadata {
-    identifier: string | {};
+    identifier: TEpubXMLIdentifier | TEpubXMLIdentifier[];
     title: string;
     language: string;
-
-    publisher?: string;
-    language?: string;
-    title?: string;
-    subject?: string;
-    description?: string;
     creator?: string;
-    date?: string;
-    ISBN?: string;
-    UUID?: string;
+
+    description?: string;
+    subject?: string;
+    publisher?: string;
+
+    date?: string | number;
+
+    meta: Array<{ attr: { name: string; content: string | number } }>;
+}
+
+interface IEpubXMLManifest {
+    item: Array<{ attr: { href: string; 'media-type': string; id: string } }>;
+}
+
+interface IEpubXMLSpineItemRef {
+    attr: {
+        id?: string;
+        idref: string;
+        linear?: 'yes' | 'no';
+    };
+}
+
+interface IEpubXMLSpine {
+    attr: {
+        id?: string;
+        'page-progression-direction'?: 'rtl' | 'ltr';
+        toc?: string;
+    };
+    itemref: IEpubXMLSpineItemRef | IEpubXMLSpineItemRef[];
+}
+
+interface IXMLData {
+    package: {
+        attr: {
+            version: number;
+            'unique-identifier': string;
+        };
+        metadata: IEpubXMLMetadata;
+        manifest: IEpubXMLManifest;
+        spine: IEpubXMLSpine;
+        guide?:
+            | string
+            | {
+                  reference: {
+                      attr: {
+                          href: string;
+                          type: string;
+                          title: string;
+                      };
+                  };
+              };
+    };
 }
 
 interface IEpubMetadata {
-    id: string;
+    identifier: string;
     publisher?: string;
     language?: string;
     title?: string;
@@ -36,6 +88,24 @@ interface IEpubMetadata {
     date?: string;
 }
 
+interface IEpubSpine {
+    id?: string;
+    direction?: 'rtl' | 'ltr';
+    toc?: string;
+    items: Array<string>;
+}
+
+type TEpubManifest = {
+    href: string;
+    'media-type': string;
+    id: string;
+}[];
+
+type TEpubGuide = {
+    href: string;
+    type: string;
+    title: string;
+};
 
 function findFile(archive: JsZip, filename: string) {
     if (archive.files[filename]) {
@@ -109,188 +179,197 @@ async function parseRootFile(archive: JsZip, rootFile: JsZip.JSZipObject) {
         ignoreAttributes: false,
         ignoreNameSpace: true,
         parseAttributeValue: true,
-    });
+    }) as IXMLData;
 
+    const metadata = parseMetadata(XMLData);
+    const spine = parseSpine(XMLData);
+    const manifest = parseManifest(XMLData);
+    const guide = parseGuide(XMLData);
+
+    const processingItems = processItems(manifest, spine);
+    const items = await loadItems(archive, rootFile, processingItems);
+
+    const foundCover = findCover(manifest, guide);
+    const cover = await loadCover(archive, rootFile, foundCover);
+
+    return {
+        cover,
+        metadata,
+        items,
+    };
+}
+
+function parseMetadata(XMLData: IXMLData) {
     const metadata: Partial<IEpubMetadata> = {};
 
     const uidName = XMLData.package.attr['unique-identifier'];
+    const entries = Object.entries(
+        XMLData.package.metadata
+    ) as Entries<IEpubXMLMetadata>;
+    for (const entry of entries) {
+        if (entry) {
+            const [key, value] = entry;
 
-    for(const [key, val] of Object.entries(XMLData.package.metadata) || [] as AnyEntries<IEpubMetadata>) {
-        if(val) {
-            let parsedValue = null;
-            if(key === 'identifier') {
-                parsedValue = val;
-                if(Array.isArray(val)) {
-                    parsedValue = val.find((item) => item.attr.id === uidName);
-                }
-                if(parsedValue) {
-                    parsedValue = String(parsedValue).replace('urn:uuid:', '').toUpperCase().trim();
+            if (value) {
+                let parsedValue = null;
+                if (key === 'identifier') {
+                    parsedValue = value;
+                    if (Array.isArray(value)) {
+                        parsedValue = (value as TEpubXMLIdentifier[]).find(
+                            (item) => item.attr.id === uidName
+                        );
+                        if (parsedValue) {
+                            parsedValue = parsedValue.value;
+                        }
+                    } else {
+                        parsedValue = (value as TEpubXMLIdentifier).value;
+                    }
+                    if (parsedValue) {
+                        parsedValue = String(parsedValue)
+                            .replace('urn:uuid:', '')
+                            .toUpperCase()
+                            .trim();
+                    } else {
+                        throw new Error(
+                            'Cannot determine book unique identifier'
+                        );
+                    }
                 } else {
-                    throw new Error('Cannot determine book unique identifier');
-                }
-            } else {
-                if(typeof val === 'object') {
-                    // TODO: Do better typings
-                    parsedValue = (val as any).value;
-                } else {
-                    parsedValue = val;
+                    if (typeof value === 'object') {
+                        // TODO: Do better typings
+                        parsedValue = (value as any).value;
+                    } else {
+                        parsedValue = value;
+                    }
                 }
                 metadata[key as keyof IEpubMetadata] = parsedValue;
             }
         }
     }
 
-    console.log(metadata);
-    
+    return metadata as IEpubMetadata;
+}
 
+function parseSpine(XMLData: IXMLData) {
+    const spine: Partial<IEpubSpine> = {
+        items: [],
+    };
+    if ('id' in XMLData.package.spine.attr) {
+        spine.id = XMLData.package.spine.attr.id;
+    }
+    if ('page-progression-direction' in XMLData.package.spine.attr) {
+        spine.direction =
+            XMLData.package.spine.attr['page-progression-direction'];
+    }
+    if ('toc' in XMLData.package.spine.attr) {
+        spine.toc = XMLData.package.spine.attr.toc;
+    }
 
-    const epubData = [];
+    if (Array.isArray(XMLData.package.spine.itemref)) {
+        for (const item of XMLData.package.spine.itemref) {
+            spine.items?.push(item.attr.idref);
+        }
+    } else {
+        spine.items?.push(XMLData.package.spine.itemref.attr.idref);
+    }
 
-    epubData.push(parseMetadata(XMLData.package.metadata));
-    epubData.push(
-        parseGuide(XMLData.package.guide, XMLData.package, archive, rootFile)
-    );
-    epubData.push(parseContent(XMLData.package, archive, rootFile));
+    return spine as IEpubSpine;
+}
 
-    const result = await Promise.all(epubData);
+function parseManifest(XMLData: IXMLData) {
+    const manifest: TEpubManifest = [];
+    for (const item of XMLData.package.manifest.item) {
+        manifest.push(item.attr);
+    }
+    return manifest;
+}
 
-    return result.reduce(
-        (acc, { key, value }) => ({ ...acc, [key]: value }),
-        {}
-    );
+function parseGuide(XMLData: IXMLData) {
+    if (!XMLData.package.guide || typeof XMLData.package.guide === 'string') {
+        return undefined;
+    }
+    // There is books where guide is array;
+    return XMLData.package.guide.reference.attr;
 }
 
 //
 
-async function parseMetadata(value: any) {
-    console.log(1);
-    console.log(value)
-    const metadata: any = {};
-    if (Array.isArray(value.identifier)) {
-        for (const item of value.identifier) {
-            metadata.id = String(item['#text']);
-            break;
+function findCover(manifest: TEpubManifest, guide?: TEpubGuide) {
+    if (guide && guide.type === 'cover') {
+        return guide;
+    }
+    for (const item of manifest) {
+        if (item.id.includes('cover.jpg')) {
+            return item;
         }
-    } else {
-        metadata.id = String(value.identifier['#text']);
     }
-
-    metadata.id = metadata.id.replace('urn:uuid:', '');
-
-    metadata.creator = value.creator;
-
-    if(typeof metadata.creator === 'object') {
-        metadata.creator = metadata.creator['#text'];
+}
+function processItems(manifest: TEpubManifest, spine: IEpubSpine) {
+    const items = [];
+    for (const id of spine.items) {
+        const item = manifest.find((item) => item.id === id);
+        if (item && item['media-type'] === 'application/xhtml+xml') {
+            items.push(item);
+        }
     }
-
-    metadata.title = value.title;
-
-    return {
-        key: 'metadata',
-        value: metadata,
-    };
+    return items;
 }
 
-async function parseContent(
-    epubPackage: any,
+//
+
+async function loadCover(
     archive: JsZip,
-    rootFile: JsZip.JSZipObject
+    rootFile: JsZip.JSZipObject,
+    cover?: { href: string; 'media-type'?: string }
 ) {
-    console.log(epubPackage);
-    const textFiles: string[] = [];
-    if (epubPackage.spine.itemref) {
-        for (const { idref } of epubPackage.spine.itemref) {
-            const fileInfo = epubPackage.manifest.item.find(
-                (item: any) => item.id === idref
-            );
-            textFiles.push(fileInfo.href);
-        }
+    if (!cover) {
+        return null;
     }
 
-    if (textFiles.length === 0) {
-        return { key: 'items', value: undefined };
+    const [path, _] = rootFile?.name.split('/');
+    const filePath = [path, cover.href].join('/');
+    const blob = await archive.files[filePath].async('blob');
+
+    const type = cover['media-type'] || mime.lookup(cover.href);
+
+    if (!type) {
+        return blob;
     }
 
-    const path = rootFile?.name.split('/');
-    path?.pop();
-
-    const items: string[] = [];
-
-    for (const filename of textFiles) {
-        const href = path?.concat([filename]).join('/');
-
-        const file = findFile(archive, href!);
-        const r = await file?.async('text');
-        const text = domParser.parseFromString(
-            r!,
-            'application/xhtml+xml'
-        ).documentElement.textContent;
-
-        if (text) {
-            const cleanText = text
-                ?.replaceAll('\n', '.')
-                ?.replaceAll('?', '?.')
-                ?.replaceAll('!', '!.')
-                ?.trim();
-            if (cleanText !== '') {
-                items.push(cleanText);
-            }
-        }
-    }
-
-    return {
-        key: 'items',
-        value: items,
-    };
+    return blob.slice(0, blob.size, type);
 }
 
-async function parseGuide(
-    value: any,
-    epubPackage: any,
+async function loadItems(
     archive: JsZip,
-    rootFile: JsZip.JSZipObject
+    rootFile: JsZip.JSZipObject,
+    processingItems: Array<{ href: string }>
 ) {
-    if (!value.reference || value.reference.type !== 'cover') {
-        return { key: 'cover', value: undefined };
+    const [path, _] = rootFile?.name.split('/');
+
+    const loadingItems = [];
+    for (const { href } of processingItems) {
+        const filePath = [path, href].join('/');
+        loadingItems.push(archive.files[filePath].async('text'));
     }
-
-    const path = rootFile?.name.split('/');
-    path?.pop();
-
-    const href = path?.concat([value.reference.href]).join('/');
-
-    if (!href) {
-        return { key: 'cover', value: undefined };
-    }
-    const file = findFile(archive, href);
-
-    if (!file) {
-        return { key: 'cover', value: undefined };
-    }
-
-    let data = await file.async('blob');
-    const foundDescription = epubPackage.manifest.item.find(
-        (item: any) => item.href === value.reference.href
-    );
-    data = data.slice(0, data.size, foundDescription['media-type']);
-    return {
-        key: 'cover',
-        value: URL.createObjectURL(data),
-    };
-}
-
-function compileContent(items: string[]) {
-    const compiledText = [];
-
-    for (const row of items) {
-        const sentences = row
-            .split('.')
-            .map((item) => item.replaceAll('— ', '—\u00A0').trim())
-            .filter((item) => item !== '');
-        compiledText.push(...sentences);
-    }
-
-    return SentenceTokenizer.tokenize(compiledText.join(' '));
+    const domParser = new DOMParser();
+    const loadedItems = await Promise.all(loadingItems);
+    const parsedItems = loadedItems
+        .map((item) =>
+            SentenceTokenizer.tokenize(
+                (
+                    domParser
+                        .parseFromString(item, 'application/xhtml+xml')
+                        .body.textContent?.trimStart()
+                        ?.trimEnd() + '.'
+                )
+                    .split('\n')
+                    .join('. ')
+            )
+                .map((item) => item.replaceAll('. .', '.'))
+                .filter((item) => item !== '.')
+        )
+        .reduce((acc, v) => [...acc, ...v], []);
+    return parsedItems;
 }
 
 async function epubToTxt(blob: Blob) {
@@ -298,6 +377,7 @@ async function epubToTxt(blob: Blob) {
         throw new Error('Not an Epub file');
     }
 
+    const zip = new JsZip();
     const archive = await zip.loadAsync(blob);
 
     if (Object.keys(archive.files).length === 0) {
@@ -306,14 +386,7 @@ async function epubToTxt(blob: Blob) {
 
     await validateMimeType(archive);
     const rootFile = await validateRootFile(archive);
-
     const parsedEpub = await parseRootFile(archive, rootFile);
-
-    const content = compileContent((parsedEpub as any).items);
-    delete (parsedEpub as any).items;
-    (parsedEpub as any).content = content;
-
-    // console.log(content)
 
     return parsedEpub;
 }

@@ -5,7 +5,6 @@ import styles from './styles.module.scss';
 
 interface IBookPlayerProps {
     isPlaying: boolean;
-    rawBookText: string;
     bookText: string[];
     currentWordIndex: number;
     onPlayerClick: () => void;
@@ -41,7 +40,6 @@ const BookPart = ({
 
 const BookPlayer = ({
     isPlaying,
-    rawBookText,
     bookText,
     currentWordIndex,
     onPlayerClick,
@@ -59,14 +57,7 @@ const BookPlayer = ({
                     [styles.playing]: isPlaying,
                 })}
             >
-                {isPlaying ? (
-                    <SingleWordRender word={bookText[currentWordIndex]} />
-                ) : (
-                    <BookPart
-                        bookText={bookText}
-                        currentWordIndex={currentWordIndex}
-                    />
-                )}
+                <SingleWordRender word={bookText[currentWordIndex]} />
             </div>
         </div>
     );

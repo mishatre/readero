@@ -2,20 +2,22 @@ import Book from '../../Components/Book';
 import styles from './styles.module.scss';
 
 import { useLibraryContext } from '../../Providers/Library';
+import { useReadingStatsContext } from '../../Providers/ReadingStats';
+
 import useFileInput from '../../hooks/useFileInput';
 import { useCallback } from 'react';
 
 import { ReactComponent as PlusIcon } from '../../assets/icons/plus-solid.svg';
 
 const Library = () => {
-    const { library, loadBook } = useLibraryContext();
+    const { library, loadBooks } = useLibraryContext();
+    const { getBookStats } = useReadingStatsContext();
 
-    const onAdd = useFileInput({}, (files: File[]) => {
+    const onAdd = useFileInput({ multiple: true }, async (files: File[]) => {
         if (files.length === 0) {
             return;
         }
-        const selectedFile = files[0];
-        loadBook(selectedFile);        
+        await loadBooks(files);
     });
 
     const onBookClick = useCallback((id: string) => {}, []);
