@@ -1,41 +1,41 @@
 {
-  "short_name": "Readero",
-  "name": "Readero",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#fefefe",
-  "background_color": "#fefefe",
-  "share_target": {
-    "action": "/import",
-    "method": "POST",
-    "enctype": "multipart/form-data",
-    "params": {
-      "title": "name",
-      "text": "description",
-      "url": "link",
-      "files": [
+    "short_name": "Readero",
+    "name": "Readero",
+    "icons": [
         {
-          "name": "Epub",
-          "accept": "application/epub+zip"
+            "src": "favicon.png",
+            "sizes": "64x64 32x32 24x24 16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "logo192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "logo512.png",
+            "type": "image/png",
+            "sizes": "512x512"
         }
-      ]
+    ],
+    "start_url": "./readero",
+    "display": "standalone",
+    "theme_color": "#edd1b0",
+    "background_color": "#edd1b0",
+    "share_target": {
+        "action": "./readero/import",
+        "method": "POST",
+        "enctype": "multipart/form-data",
+        "params": {
+            "title": "name",
+            "text": "description",
+            "url": "link",
+            "files": [
+                {
+                    "name": "Epub",
+                    "accept": "application/epub+zip"
+                }
+            ]
+        }
     }
-  }
 }

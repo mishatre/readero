@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/readero/static/css/main.b76e348b.chunk.css",
-    "main.js": "/readero/static/js/main.b90f5e94.chunk.js",
-    "main.js.map": "/readero/static/js/main.b90f5e94.chunk.js.map",
-    "runtime-main.js": "/readero/static/js/runtime-main.4ac8b37a.js",
-    "runtime-main.js.map": "/readero/static/js/runtime-main.4ac8b37a.js.map",
-    "static/js/2.8f56983d.chunk.js": "/readero/static/js/2.8f56983d.chunk.js",
-    "static/js/2.8f56983d.chunk.js.map": "/readero/static/js/2.8f56983d.chunk.js.map",
-    "static/js/3.f39f3052.chunk.js": "/readero/static/js/3.f39f3052.chunk.js",
-    "static/js/3.f39f3052.chunk.js.map": "/readero/static/js/3.f39f3052.chunk.js.map",
+    "main.css": "/readero/static/css/main.9f89f92b.chunk.css",
+    "main.js": "/readero/static/js/main.6ae39a36.chunk.js",
+    "main.js.map": "/readero/static/js/main.6ae39a36.chunk.js.map",
+    "runtime-main.js": "/readero/static/js/runtime-main.94cd1d77.js",
+    "runtime-main.js.map": "/readero/static/js/runtime-main.94cd1d77.js.map",
+    "static/js/2.cb209c4e.chunk.js": "/readero/static/js/2.cb209c4e.chunk.js",
+    "static/js/2.cb209c4e.chunk.js.map": "/readero/static/js/2.cb209c4e.chunk.js.map",
+    "static/js/3.a5ddeffa.chunk.js": "/readero/static/js/3.a5ddeffa.chunk.js",
+    "static/js/3.a5ddeffa.chunk.js.map": "/readero/static/js/3.a5ddeffa.chunk.js.map",
     "index.html": "/readero/index.html",
-    "static/css/main.b76e348b.chunk.css.map": "/readero/static/css/main.b76e348b.chunk.css.map",
-    "static/js/2.8f56983d.chunk.js.LICENSE.txt": "/readero/static/js/2.8f56983d.chunk.js.LICENSE.txt",
+    "static/css/main.9f89f92b.chunk.css.map": "/readero/static/css/main.9f89f92b.chunk.css.map",
+    "static/js/2.cb209c4e.chunk.js.LICENSE.txt": "/readero/static/js/2.cb209c4e.chunk.js.LICENSE.txt",
     "static/media/index.css": "/readero/static/media/Kazimir.f7c3188e.otf",
     "static/media/angle-left-solid.e6b3ab3d.svg": "/readero/static/media/angle-left-solid.e6b3ab3d.svg",
     "static/media/cog-solid.540ab5dc.svg": "/readero/static/media/cog-solid.540ab5dc.svg",
@@ -19,9 +19,9 @@
     "static/media/plus-solid.c82024f4.svg": "/readero/static/media/plus-solid.c82024f4.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.4ac8b37a.js",
-    "static/js/2.8f56983d.chunk.js",
-    "static/css/main.b76e348b.chunk.css",
-    "static/js/main.b90f5e94.chunk.js"
+    "static/js/runtime-main.94cd1d77.js",
+    "static/js/2.cb209c4e.chunk.js",
+    "static/css/main.9f89f92b.chunk.css",
+    "static/js/main.6ae39a36.chunk.js"
   ]
 }
