@@ -1,0 +1,29 @@
+
+.container {
+    
+    height: 38px;
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: max-content 1fr;
+
+    .button {
+        width: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .backButton {
+        margin-left: 12px;
+    }
+
+    .buttons {
+        padding-right: 12px;
+        display: grid;
+        grid-template-columns: repeat(3, max-content);
+        grid-column-gap: 32px;
+        justify-content: flex-end;
+    }
+
+}

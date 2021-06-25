@@ -126,7 +126,7 @@ const VirtualBookPlayer = ({
                             itemSize={getItemSize.bind(null, width)}
                             itemCount={sentences.length}
                             className={styles.list}
-                            overscanCount={20}
+                            // overscanCount={20}
                             // initialScrollOffset={-500}
                         >
                             {SentenceRow}

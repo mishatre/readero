@@ -1,0 +1,57 @@
+
+.container {
+
+    width: 100%;
+    text-align: center;
+
+    .ORPGuideline {
+
+        &.disabled {
+            .topLine, .bottomLine {
+                background-color: transparent;
+                &::after {
+                    background-color: transparent;
+                }
+            }    
+        }
+
+        .topLine {
+            width: 100%;
+            height: 3px;
+            background-color: black;
+            &::after {
+                margin-left: -15px;
+                position: absolute;
+                content: ' ';
+                height: 12px;
+                width: 4px;
+                background-color: black;
+            }
+        }
+
+        .bottomLine {
+            width: 100%;
+            margin-top: 6px;
+            height: 3px;
+            background-color: black;
+            &::after {
+                margin-top: -9px;
+                margin-left: -15px;
+                position: absolute;
+                content: ' ';
+                height: 12px;
+                width: 4px;
+                background-color: black;
+            }
+        }
+
+    }
+
+    &.orp {
+
+        .orpChar {
+            color: red;
+        }
+    }
+
+}

@@ -63,7 +63,7 @@ const ReadingStatsProvider = ({ children }: IReadingStatsProviderProps) => {
             localStorage.setItem(
                 id,
                 JSON.stringify({
-                    currentBookStat,
+                    ...currentBookStat,
                     currentWordIndex,
                 })
             );
@@ -101,7 +101,7 @@ const ReadingStatsProvider = ({ children }: IReadingStatsProviderProps) => {
             localStorage.setItem(
                 id,
                 JSON.stringify({
-                    currentBookStat,
+                    ...currentBookStat,
                     currentSentenceIndex,
                 })
             );
