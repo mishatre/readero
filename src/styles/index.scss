@@ -1,0 +1,21 @@
+
+@import "./fonts.scss";
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior-y: none;
+    background-color: #fefefe;
+}
+  
+#root {
+    font-family: Kazimir;
+    /* font-family: Helvetica, sans-serif; */
+    user-select: none;
+    position: absolute;
+    top: env(safe-area-inset-top);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
+}

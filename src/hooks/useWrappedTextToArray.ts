@@ -2,7 +2,7 @@ import { throttle } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import getLineBreaks from '../utils/libeBreaks';
 
-function useWrappedTextToArray(text: string, width: number) {
+function useWrappedTextToArray(text: string, fontFamily: string, width: number) {
     const [data, set] = useState<string[]>([]);
     const throttled = useRef(
         throttle((text: string, width: number) => {
@@ -14,7 +14,7 @@ function useWrappedTextToArray(text: string, width: number) {
             el.style.overflow = 'hidden';
             el.style.position = 'absolute';
             el.style.visibility = 'hidden';
-            el.style.fontFamily = 'Kazemir';
+            el.style.fontFamily = fontFamily;
             el.style.fontSize = '16px';
             el.style.width = `${width - 20}px`;
             document.getElementById('root')?.appendChild(el);
