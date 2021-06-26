@@ -15,7 +15,7 @@ function useAccurateTimer(
 
     useEffect(() => {
         if (isPlaying) {
-            const currentTime = new Date().getTime();
+            const currentTime = new Date().getTime() + delay;
             const newNextFireTime = delay
                 ? Math.max(currentTime, currentTime)
                 : never;

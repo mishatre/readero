@@ -6,106 +6,48 @@ interface IReadingStatsProviderProps {
 }
 
 interface IReadingStatsContext {
-    getBookStats: (id: string) => IBookStat;
-    setBookCurrentWordIndex: (id: string, newWordIndex: number) => void;
-    updateBookCurrentWordIndex: (id: string, incValue: number) => number;
-    setBookSentenceWordIndex: (id: string, newSentenceIndex: number) => void;
-    updateBookSentenceWordIndex: (id: string, incValue: number) => number;
+    getStats: (id: string) => IBookStat;
+    setStats: <K extends keyof IBookStat>(
+        id: string,
+        key: K,
+        value: IBookStat[K]
+    ) => IBookStat;
 }
 
 export interface IBookStat {
-    currentWordIndex: number;
-    currentSentenceIndex: number;
+    index: number;
 }
 
 const [useReadingStatsContext, Provider] = createCtx<IReadingStatsContext>();
 
 const ReadingStatsProvider = ({ children }: IReadingStatsProviderProps) => {
-    const getBookStats = useCallback((id: string) => {
-        const savedBookStat = localStorage.getItem(id);
-        if (!savedBookStat) {
-            const newBookStat = {
-                currentWordIndex: 0,
-                currentSentenceIndex: 0,
-            };
-            localStorage.setItem(id, JSON.stringify(newBookStat));
-            return newBookStat;
+    const getStats = useCallback((id: string) => {
+        const stringStats = localStorage.getItem(id);
+        if (stringStats) {
+            return JSON.parse(stringStats);
         }
-        return JSON.parse(savedBookStat);
+        return {
+            index: 0,
+        };
     }, []);
+    const setStats = useCallback(
+        <K extends keyof IBookStat>(
+            id: string,
+            key: K,
+            value: IBookStat[K]
+        ) => {
+            let currentStats = {
+                index: 0,
+            };
 
-    const setBookCurrentWordIndex = useCallback(
-        (id: string, newWordIndex: number) => {
-            const savedBookStat = localStorage.getItem(id);
-            if (!savedBookStat) {
-                return;
+            const stringStats = localStorage.getItem(id);
+            if (stringStats) {
+                currentStats = JSON.parse(stringStats);
             }
-            localStorage.setItem(
-                id,
-                JSON.stringify({
-                    ...JSON.parse(savedBookStat),
-                    currentWordIndex: newWordIndex,
-                })
-            );
-        },
-        []
-    );
+            currentStats[key] = value;
+            localStorage.setItem(id, JSON.stringify(currentStats));
 
-    const updateBookCurrentWordIndex = useCallback(
-        (id: string, incValue: number) => {
-            const savedBookStat = localStorage.getItem(id);
-            if (!savedBookStat) {
-                return 0;
-            }
-            const currentBookStat = JSON.parse(savedBookStat);
-            const currentWordIndex =
-                currentBookStat.currentWordIndex + incValue;
-            localStorage.setItem(
-                id,
-                JSON.stringify({
-                    ...currentBookStat,
-                    currentWordIndex,
-                })
-            );
-            return currentWordIndex;
-        },
-        []
-    );
-
-    const setBookSentenceWordIndex = useCallback(
-        (id: string, newSentenceIndex: number) => {
-            const savedBookStat = localStorage.getItem(id);
-            if (!savedBookStat) {
-                return;
-            }
-            localStorage.setItem(
-                id,
-                JSON.stringify({
-                    ...JSON.parse(savedBookStat),
-                    currentSentenceIndex: newSentenceIndex,
-                })
-            );
-        },
-        []
-    );
-
-    const updateBookSentenceWordIndex = useCallback(
-        (id: string, incValue: number) => {
-            const savedBookStat = localStorage.getItem(id);
-            if (!savedBookStat) {
-                return 0;
-            }
-            const currentBookStat = JSON.parse(savedBookStat);
-            const currentSentenceIndex =
-                currentBookStat.currentSentenceIndex + incValue;
-            localStorage.setItem(
-                id,
-                JSON.stringify({
-                    ...currentBookStat,
-                    currentSentenceIndex,
-                })
-            );
-            return currentSentenceIndex;
+            return currentStats;
         },
         []
     );
@@ -113,11 +55,8 @@ const ReadingStatsProvider = ({ children }: IReadingStatsProviderProps) => {
     return (
         <Provider
             value={{
-                getBookStats,
-                setBookCurrentWordIndex,
-                updateBookCurrentWordIndex,
-                setBookSentenceWordIndex,
-                updateBookSentenceWordIndex,
+                getStats,
+                setStats,
             }}
         >
             {children}
@@ -125,6 +64,25 @@ const ReadingStatsProvider = ({ children }: IReadingStatsProviderProps) => {
     );
 };
 
-export { useReadingStatsContext };
+function useReadingStats(id: string) {
+    const { getStats, setStats: set } = useReadingStatsContext();
+    const [stats, setStatsState] = useState<IBookStat>(getStats(id));
+    const setStats = useCallback(
+        <K extends keyof IBookStat>(
+            id: string,
+            key: K,
+            value: IBookStat[K]
+        ) => {
+            setStatsState(set(id, key, value));
+        },
+        [set]
+    );
+    useEffect(() => {
+        setStatsState(getStats(id));
+    }, [id]);
+    return { stats, setStats };
+}
+
+export { useReadingStatsContext, useReadingStats };
 
 export default ReadingStatsProvider;

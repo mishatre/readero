@@ -1,6 +1,4 @@
-
 .container {
-
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -8,8 +6,14 @@
 
     padding-top: 30px;
 
-    .statusBar {
+    user-select: none;
 
+    &.hidden {
+        animation: hide 1s ease-in-out;
+        visibility: hidden;
+    }
+
+    .statusBar {
         position: relative;
 
         margin-bottom: 12px;
@@ -29,12 +33,10 @@
 
             background-color: black;
             border-radius: 5px;
-
         }
     }
 
     .bottomBar {
-
         position: relative;
 
         width: 80%;
@@ -58,10 +60,19 @@
             letter-spacing: 0.03em;
 
             justify-self: flex-end;
-            
+
             color: rgba(127, 127, 131, 0.9);
         }
-
     }
+}
 
+@keyframes hide {
+    from {
+        opacity: 1;
+        visibility: visible;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
 }

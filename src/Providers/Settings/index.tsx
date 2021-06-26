@@ -1,125 +1,81 @@
 import createCtx from '../../utils/context';
 import { useCallback, useEffect, useState } from 'react';
 
+type SetStateAction<S> = S | ((prevState: S) => S);
+
 interface ISettingsProviderProps {
     children: React.ReactNode;
 }
 
 interface ISettingsContext {
     settings: ISettings;
-
-    setWordsPerMinute: (newValue: number) => void;
-    updateWordsPerMinute: (incValue: number) => void;
-
-    setFont: (newValue: string) => void;
-    setFontSize: (newValue: number) => void;
-    setUseORP: (newValue: boolean) => void;
-    setSlowDownOnLongWords: (newValue: boolean) => void;
+    set: <K extends keyof ISettings>(
+        key: K,
+        value: SetStateAction<ISettings[K]>
+    ) => void;
 }
 
 export interface ISettings {
-    font: string;
+    fontFamily: string;
     fontSize: number;
     wordsPerMinute: number;
-    useORP: boolean;
+    ORP: boolean;
+    ORPGuideLine: boolean;
     slowDownOnLongWords: boolean;
 }
 
+const settingsList = [
+    'fontFamily',
+    'fontSize',
+    'wordsPerMinute',
+    'ORP',
+    'ORPGuideLine',
+    'slowDownOnLongWords',
+] as const;
+
 const defaultSettings = {
-    font: 'Kazemir',
+    fontFamily: 'Kazemir',
     fontSize: 48,
     wordsPerMinute: 320,
-    useORP: true,
+    ORP: true,
+    ORPGuideLine: true,
     slowDownOnLongWords: true,
 };
 
-const [useSettingsContext, Provider] = createCtx<ISettingsContext>();
+const [useSettings, Provider] = createCtx<ISettingsContext>();
 
 const SettingsProvider = ({ children }: ISettingsProviderProps) => {
     const [settings, setSettings] = useState<ISettings | null>(null);
 
     useEffect(() => {
-        const settings: Partial<ISettings> = {};
-
-        const {
-            wordsPerMinute: defaultWordsPerMinute,
-            ...defaultSettingsRest
-        } = defaultSettings;
-
-        const settingsString = localStorage.getItem('settings');
-        if (!settingsString) {
-            localStorage.setItem(
-                'settings',
-                JSON.stringify(defaultSettingsRest)
-            );
-            Object.assign(settings, defaultSettingsRest);
-        } else {
-            Object.assign(settings, JSON.parse(settingsString));
+        const settings = defaultSettings;
+        for (const key of settingsList) {
+            const jsonValue = localStorage.getItem(key);
+            if (jsonValue) {
+                (settings[key] as ISettings[typeof key]) = JSON.parse(
+                    jsonValue
+                ).value;
+            }
         }
-
-        const wordsPerMinuteString = localStorage.getItem('wordsPerMinute');
-        if (!wordsPerMinuteString) {
-            localStorage.setItem(
-                'wordsPerMinute',
-                String(defaultWordsPerMinute)
-            );
-            settings.wordsPerMinute = defaultWordsPerMinute;
-        } else {
-            settings.wordsPerMinute = Number(wordsPerMinuteString);
-        }
-
-        setSettings(settings as ISettings);
+        setSettings(settings);
     }, []);
 
-    const setSetting = useCallback(
-        <K extends keyof ISettings>(key: K, value: ISettings[K]) => {
-            setSettings((currentSettings) => {
-                if (!currentSettings) {
+    const set = useCallback(
+        <K extends keyof ISettings>(
+            key: K,
+            value: SetStateAction<ISettings[K]>
+        ) => {
+            setSettings((prevValue) => {
+                if (!prevValue) {
                     return null;
                 }
-                if (key === 'wordsPerMinute') {
-                    localStorage.setItem('wordsPerMinute', String(value));
-                } else {
-                    localStorage.setItem(
-                        'settings',
-                        JSON.stringify({ ...currentSettings, [key]: value })
-                    );
-                }
-                return { ...currentSettings, [key]: value };
+                const nextValue =
+                    typeof value === 'function' ? value(prevValue[key]) : value;
+                localStorage.setItem(key, JSON.stringify({ value: nextValue }));
+                return { ...prevValue, [key]: nextValue };
             });
         },
         []
-    );
-
-    const setWordsPerMinute = useCallback(
-        (newValue: number) => setSetting('wordsPerMinute', newValue),
-        [setSetting]
-    );
-    const updateWordsPerMinute = useCallback(
-        (incValue: number) =>
-            setSetting(
-                'wordsPerMinute',
-                (settings?.wordsPerMinute || defaultSettings.wordsPerMinute) +
-                    incValue
-            ),
-        [settings?.wordsPerMinute, setSetting]
-    );
-
-    const setFont = useCallback(
-        (newValue: string) => setSetting('font', newValue),
-        [setSetting]
-    );
-    const setFontSize = useCallback(
-        (newValue: number) => setSetting('fontSize', newValue),
-        [setSetting]
-    );
-    const setUseORP = useCallback(
-        (newValue: boolean) => setSetting('useORP', newValue),
-        [setSetting]
-    );
-    const setSlowDownOnLongWords = useCallback(
-        (newValue: boolean) => setSetting('slowDownOnLongWords', newValue),
-        [setSetting]
     );
 
     if (!settings) {
@@ -130,12 +86,7 @@ const SettingsProvider = ({ children }: ISettingsProviderProps) => {
         <Provider
             value={{
                 settings,
-                setWordsPerMinute,
-                updateWordsPerMinute,
-                setFont,
-                setFontSize,
-                setUseORP,
-                setSlowDownOnLongWords,
+                set,
             }}
         >
             {children}
@@ -143,6 +94,6 @@ const SettingsProvider = ({ children }: ISettingsProviderProps) => {
     );
 };
 
-export { useSettingsContext };
+export { useSettings };
 
 export default SettingsProvider;

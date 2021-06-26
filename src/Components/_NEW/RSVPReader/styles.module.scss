@@ -1,18 +1,18 @@
-
 .container {
-
     width: 100%;
-    text-align: center;
+    // text-align: center;
+
+    user-select: none;
 
     .ORPGuideline {
-
         &.disabled {
-            .topLine, .bottomLine {
+            .topLine,
+            .bottomLine {
                 background-color: transparent;
                 &::after {
                     background-color: transparent;
                 }
-            }    
+            }
         }
 
         .topLine {
@@ -20,7 +20,7 @@
             height: 3px;
             background-color: black;
             &::after {
-                margin-left: -15px;
+                margin-left: 361.54125000000005px;
                 position: absolute;
                 content: ' ';
                 height: 12px;
@@ -36,7 +36,7 @@
             background-color: black;
             &::after {
                 margin-top: -9px;
-                margin-left: -15px;
+                margin-left: 361.54125000000005px;
                 position: absolute;
                 content: ' ';
                 height: 12px;
@@ -44,14 +44,11 @@
                 background-color: black;
             }
         }
-
     }
 
     &.orp {
-
         .orpChar {
             color: red;
         }
     }
-
 }
