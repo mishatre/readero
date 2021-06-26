@@ -4,15 +4,25 @@ import Providers from 'Providers';
 
 import Reader from './Pages/Reader';
 import Library from './Pages/Library';
+import Settings from 'Pages/Settings';
+import Menu from 'Components/Menu';
+
+import styles from './styles.module.scss';
 
 function App() {
   return (
-    <Providers>
-      <Switch>
-        <Route path="/book/:id" component={Reader} />
-        <Route path="/" component={Library} />
-      </Switch>
-    </Providers>
+    <div className={styles.container}>
+      <Providers>
+        <Switch>
+          <Route path="/book/:id" exact component={Reader} />
+          <Route path="/" >
+              <Route path="/" exact component={Library} />
+              <Route path="/settings" exact component={Settings} />
+              <Menu />
+          </Route>
+        </Switch>
+      </Providers>
+    </div>
   );
 }
 

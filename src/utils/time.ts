@@ -22,6 +22,10 @@ const timestampToHumanTime = (timestamp: number) => {
         string += `${seconds}s`;
     }
 
+    if(string === '') {
+        return '0';
+    }
+
     return string;
 }
 

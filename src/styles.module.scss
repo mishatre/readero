@@ -1,0 +1,11 @@
+
+.container {
+
+    height: 100%;
+
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) max-content;
+    grid-template-areas: 
+        "page"
+        "menu";
+}

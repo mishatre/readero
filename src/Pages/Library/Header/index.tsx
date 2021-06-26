@@ -2,14 +2,14 @@
 import styles from './styles.module.scss';
 import { ReactComponent as PlusIcon } from 'assets/icons/plus-solid.svg'; 
 
-interface IAppHeaderProps {
+interface IHeaderProps {
     title: string;
     editMode?: boolean;
     onBookAdd?: () => void;
     onEdit?: () => void;
 }
 
-const AppHeader = ({ title, onBookAdd }: IAppHeaderProps) => {
+const Header = ({ title, onBookAdd }: IHeaderProps) => {
     return (
         <div className={styles.container}>
             <div className={styles.leftButton} onClick={onBookAdd}>
@@ -21,4 +21,4 @@ const AppHeader = ({ title, onBookAdd }: IAppHeaderProps) => {
     );
 }
 
-export default AppHeader;
+export default Header;

@@ -1,8 +1,4 @@
 .container {
-    height: 100%;
-    // width: 100%;
-
-    height: 100vh;
 
     display: grid;
     grid-template-rows: max-content minmax(min-content, 1fr);
@@ -10,10 +6,8 @@
     .content {
         display: grid;
         grid-template-rows: minmax(max-content, 1fr) max-content max-content;
-        padding: 0 40px;
+        padding: 12px 40px 0 40px;
     }
-
-    
 
     background-color: #fff;
     transition: background-color 300ms linear;

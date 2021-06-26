@@ -41,7 +41,7 @@ const settingsList = [
 // }
 
 const defaultSettings = {
-    fontFamily: 'Consolas',
+    fontFamily: 'Liberation Mono',
     fontSize: 48,
     wordsPerMinute: 320,
     ORP: true,

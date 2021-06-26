@@ -6,11 +6,12 @@ html, body {
     overflow: hidden;
     overscroll-behavior-y: none;
     background-color: #fefefe;
+    transition: background-color 300ms linear;
+    color: black;
 }
   
 #root {
-    font-family: Kazimir;
-    /* font-family: Helvetica, sans-serif; */
+    font-family: 'SF UI Display';
     user-select: none;
     position: absolute;
     top: env(safe-area-inset-top);
@@ -19,3 +20,4 @@ html, body {
     right: 0;
     overflow: auto;
 }
+

@@ -17,5 +17,5 @@ const text = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et 
 
 export const Default = Template.bind({});
 Default.args = {
-    text: new Array(100).fill(text).join(' '),
+    
 };

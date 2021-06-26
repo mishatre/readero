@@ -1,27 +1,55 @@
 
 import BookReader from 'Components/BookReader';
+import { IBookInfo, useLibraryContext } from 'Providers/Library';
+import { useCallback, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import styles from './styles.module.scss';
 
-const text = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et scelerisque nulla. Maecenas mollis erat porttitor, mattis elit eget, viverra dolor. Curabitur luctus et tortor et dapibus. Ut pharetra euismod vehicula. Maecenas quis rhoncus erat. Praesent elementum ullamcorper nibh. Donec sit amet leo auctor, posuere purus sit amet, sagittis nunc. Etiam finibus consequat nunc, vitae pretium lacus mattis non. Pellentesque porta turpis interdum sodales viverra. Curabitur tincidunt sagittis nibh sed posuere. Nulla eu fermentum libero. Mauris pretium tincidunt felis, quis luctus purus scelerisque id. Curabitur sagittis vitae ex nec feugiat.;`;
-// const text = 'a aa aaa aaaa aaaaa aaaaaa aaaaaaa aaaaaaaa aaaaaaaaa'
+function useBook(id: string) {
+    const { getBook } = useLibraryContext();
 
-const textArray = new Array(100).fill(text);
+    const [bookData, setBook] =
+        useState<{ info: IBookInfo; items: string[]; text: string[] } | null>(
+            null
+        );
+
+    useEffect(() => {
+        getBook(id).then(({ info, items }) => {
+            setBook({
+                info,
+                items,
+                text: items.join(' ').split(' '),
+            });
+        });
+    }, [id, getBook]);
+
+    return bookData;
+}
 
 const Reader = () => {
 
+    const { id } = useParams<{ id: string }>();
+    const bookInfo = useBook(id);
+    const history = useHistory();
+    const onBack = useCallback(() => history.goBack(), [history]);
+
+    
+
     return (
         <div className={styles.container}>
-            <BookReader
-                info={{
-                    id: '123',
-                    title: 'Тот кто хочет выжить',
-                    cover: false,
+            {bookInfo && 
+                <BookReader
+                    info={{
+                        ...bookInfo.info,
 
-                    totalSentences: 1000,
-                    totalWords: textArray.reduce((acc, v) => acc + v.split(' ').length, 0),
-                }}
-                text={textArray.join(' ')}
-            />
+                        totalSentences: 1000,
+                        totalWords: bookInfo.text.length
+                    }}
+                    text={bookInfo.text.join(' ')}
+
+                    onBack={onBack}
+                />
+            }
         </div>
     );
 };

@@ -7,10 +7,12 @@ import { useLibraryContext } from '../../Providers/Library';
 import useFileInput from '../../hooks/useFileInput';
 import { useCallback } from 'react';
 
-import AppHeader from 'Components/AppHeader';
+import Header from 'Pages/Library/Header';
 import useBackgroundColor from 'hooks/useBackgroundColor';
 
 const Library = () => {
+    useBackgroundColor('#FEFEFE');
+
     const { library, loadBooks } = useLibraryContext();
     // const { getBookStats } = useReadingStatsContext();
 
@@ -21,13 +23,14 @@ const Library = () => {
         await loadBooks(files);
     });
 
-    const onBookClick = useCallback((id: string) => {}, []);
+    const onBookClick = useCallback((id: string) => {
+  
 
-    useBackgroundColor('#FEFEFE');
+    }, []);
 
     return (
         <div className={styles.container}>
-            <AppHeader title="Library" onBookAdd={onAdd} />
+            <Header title="Library" onBookAdd={onAdd} />
             <div className={styles.listContainer}>
                 <div className={styles.list}>
                     {library.map((book) => (
@@ -42,10 +45,6 @@ const Library = () => {
                         />
                     ))}
                 </div>
-            </div>
-            <div className={styles.bottomMenu}>
-                <div>Library</div>
-                <div>Settings</div>
             </div>
         </div>
     );

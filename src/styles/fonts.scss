@@ -1,16 +1,235 @@
 
-
-
 @font-face {
   font-family: 'Liberation Mono';
-  src: url('../assets/fonts/LiberationMono/LiberationMono-Regular.ttf') format('ttf');
+  src: 
+    local('Liberation Mono'), 
+    url('../assets/fonts/LiberationMono/LiberationMono.woff2') format('woff2'),
+    url('../assets/fonts/LiberationMono/LiberationMono-Regular.ttf') format('ttf');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
     
 @font-face {
   font-family: 'Liberation Mono';
-  src: url('../assets/fonts/LiberationMono/LiberationMono-Bold.ttf') format('ttf');
+  src: 
+    local('Liberation Mono'), 
+    url('../assets/fonts/LiberationMono/LiberationMono-Bold.ttf')
+    format('ttf');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
+
+// SF-Mono
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Bold'), local('SFMono-Bold'),
+      url('../assets/fonts/SF-Mono/SFMono-Bold.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Light'), local('SFMono-Light'),
+      url('../assets/fonts/SF-Mono/SFMono-Light.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Medium Italic'), local('SFMono-MediumItalic'),
+      url('../assets/fonts/SF-Mono/SFMono-MediumItalic.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-MediumItalic.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Medium'), local('SFMono-Medium'),
+      url('../assets/fonts/SF-Mono/SFMono-Medium.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Light Italic'), local('SFMono-LightItalic'),
+      url('../assets/fonts/SF-Mono/SFMono-LightItalic.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-LightItalic.woff') format('woff');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Regular Italic'), local('SFMono-RegularItalic'),
+      url('../assets/fonts/SF-Mono/SFMono-RegularItalic.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-RegularItalic.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Bold Italic'), local('SFMono-BoldItalic'),
+      url('../assets/fonts/SF-Mono/SFMono-BoldItalic.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-BoldItalic.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Regular'), local('SFMono-Regular'),
+      url('../assets/fonts/SF-Mono/SFMono-Regular.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Heavy Italic'), local('SFMono-HeavyItalic'),
+      url('../assets/fonts/SF-Mono/SFMono-HeavyItalic.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-HeavyItalic.woff') format('woff');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Heavy'), local('SFMono-Heavy'),
+      url('../assets/fonts/SF-Mono/SFMono-Heavy.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-Heavy.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Semibold Italic'), local('SFMono-SemiboldItalic'),
+      url('../assets/fonts/SF-Mono/SFMono-SemiboldItalic.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-SemiboldItalic.woff') format('woff');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SFMono';
+  src: local('SFMono Semibold'), local('SFMono-Semibold'),
+      url('../assets/fonts/SF-Mono/SFMono-Semibold.woff2') format('woff2'),
+      url('../assets/fonts/SF-Mono/SFMono-Semibold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF UI Display';
+    src: local('SF UI Display Black'), local('SFUIDisplay-Black'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Black.woff2') format('woff2'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Black.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF UI Display';
+    src: local('SF UI Display Bold'), local('SFUIDisplay-Bold'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Bold.woff2') format('woff2'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF UI Display';
+    src: local('SF UI Display Heavy'), local('SFUIDisplay-Heavy'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Heavy.woff2') format('woff2'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Heavy.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF UI Display';
+    src: local('SF UI Display Semibold'), local('SFUIDisplay-Semibold'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Semibold.woff2') format('woff2'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Semibold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF UI Display';
+    src: local('SF UI Display Light'), local('SFUIDisplay-Light'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Light.woff2') format('woff2'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF UI Display';
+    src: local('SF UI Display Thin'), local('SFUIDisplay-Thin'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Thin.woff2') format('woff2'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Thin.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF UI Display';
+    src: local('SF UI Display Ultralight'), local('SFUIDisplay-Ultralight'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Ultralight.woff2') format('woff2'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Ultralight.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF UI Display';
+    src: local('SF UI Display Regular'), local('SFUIDisplay-Regular'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Regular.woff2') format('woff2'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'SF UI Display';
+    src: local('SF UI Display Medium'), local('SFUIDisplay-Medium'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Medium.woff2') format('woff2'),
+        url('../assets/fonts/SF-UI/SFUIDisplay-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+

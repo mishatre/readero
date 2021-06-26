@@ -33,12 +33,16 @@ const getOrpPos = (length: number) => {
 }
 
 class CharMeasurer {
-    private ctx: OffscreenCanvasRenderingContext2D;
+    private ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
     private templateChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnoprstuvwxyz1234567890~!@#$%^&*()_+={}:'\"\\,./<>?";
     private chars: Map<string, number> = new Map();
     constructor() {
-        this.ctx = new OffscreenCanvas(1, 1).getContext('2d')!;
-        this.ctx.font = `${48}px "Liberation Mono"`;
+        if("OffscreenCanvas" in globalThis) {
+            this.ctx = new OffscreenCanvas(1, 1).getContext('2d')!;
+        } else {
+            this.ctx = document.createElement('canvas').getContext('2d')!;
+        }        
+        this.ctx.font = `${48}px SFMono`;
         this.measureChars();
     }
     private measure(char: string) {
@@ -70,11 +74,15 @@ class CharMeasurer {
     }
 }
 
-const measurer = new CharMeasurer();
+
 
 function useORPWord({ word, width }: { word: string; width: number; }) {
 
-    console.log(width)
+    const measureRef = useRef<CharMeasurer | null>(null);
+
+    useEffect(() => {
+        measureRef.current = new CharMeasurer();
+    }, []);
 
     const [{ orpMiddlePointPx, maxOffset, maxWords }, set] = useState({
         maxOffset: 0,
@@ -83,17 +91,18 @@ function useORPWord({ word, width }: { word: string; width: number; }) {
     });
 
     useEffect(() => {
+        if(measureRef.current) {
+            // console.log(measureRef.current.longestWidth())
+            const maxWords = Math.floor((width || 0) / measureRef.current.longestWidth()) - 1;
+            const orpPos = getOrpPos(maxWords) * measureRef.current.longestWidth() + measureRef.current.longestWidth() / 2;
+            const maxOffset = getOrpPos(maxWords) + 1;
 
-        const maxWords = Math.floor((width || 0) / measurer.longestWidth()) - 1;
-        const orpPos = getOrpPos(maxWords) * measurer.longestWidth() + measurer.longestWidth() / 2;
-        const maxOffset = getOrpPos(maxWords) + 1;
-
-        set({
-            maxOffset,
-            maxWords: maxWords - (maxOffset - getOrpPos(maxWords)),
-            orpMiddlePointPx: orpPos,
-        })
-
+            set({
+                maxOffset,
+                maxWords: maxWords - (maxOffset - getOrpPos(maxWords)),
+                orpMiddlePointPx: orpPos,
+            })
+        }
     }, [width]);
 
     let r = word.trim().substr(0, maxWords);
@@ -104,9 +113,9 @@ function useORPWord({ word, width }: { word: string; width: number; }) {
 
     const lpad = ''.padStart(maxOffset - orp, '\u00A0');
     const chars = [
-        lpad + r.substr(0, orp - 1),
-        r[orp - 1],
-        trimmedWord.length > 2 ? r.substr(orp) : ''
+        <span key={1}>{lpad + r.substr(0, orp - 1)}</span>,
+        <span key={2}>{r[orp - 1]}</span>,
+        <span key={3}>{trimmedWord.length > 2 ? r.substr(orp) : ''}</span>
     ];
 
     return { chars, orpMiddlePointPx, maxOffset };
@@ -240,11 +249,11 @@ const RSVPReader = ({
                 })}
                 style={{
                     '--orpPos': `${orpMiddlePointPx}px`,
-                    fontFamily: 'Liberation Mono',
-                    lineHeight: '72px',
+                    fontFamily: 'SFMono',
+                    lineHeight: '82px',
                 } as any}
             >
-                {chars.map((v, i) => <span key={i}>{v}</span>)}
+                {chars}
             </div>
         </div>
     );

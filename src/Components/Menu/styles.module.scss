@@ -1,0 +1,35 @@
+
+.container {
+
+    user-select: none;
+
+    grid-area: menu;
+
+    min-height: 64px;
+    width: 100%;
+
+    border-top: 1px solid #e7e7e7;
+    background-color: #f5f5f5;
+
+    display: grid;
+    grid-template-columns: max-content max-content;
+    align-content: space-around;
+    justify-content: space-around;
+
+    .item {
+
+        &:active {
+            background-color: unset;
+        }
+
+        text-decoration: none;
+
+        color: grey;
+
+        &.selected {
+            color: black;
+        }
+
+    }
+
+}
