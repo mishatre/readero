@@ -1,41 +1,21 @@
 {
-    "short_name": "Readero",
     "name": "Readero",
+    "short_name": "Readero",
+    "start_url": "./readero",
     "icons": [
         {
-            "src": "favicon.png",
-            "sizes": "64x64 32x32 24x24 16x16",
+            "src": "/android-chrome-192x192.png",
+            "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "logo192.png",
-            "type": "image/png",
-            "sizes": "192x192"
-        },
-        {
-            "src": "logo512.png",
-            "type": "image/png",
-            "sizes": "512x512"
+            "src": "/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
         }
     ],
-    "start_url": ".",
-    "display": "standalone",
-    "theme_color": "#edd1b0",
-    "background_color": "#edd1b0",
-    "share_target": {
-        "action": "./readero/import",
-        "method": "POST",
-        "enctype": "multipart/form-data",
-        "params": {
-            "title": "name",
-            "text": "description",
-            "url": "link",
-            "files": [
-                {
-                    "name": "Epub",
-                    "accept": "application/epub+zip"
-                }
-            ]
-        }
-    }
+    "orientation": "portrait",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "display": "standalone"
 }

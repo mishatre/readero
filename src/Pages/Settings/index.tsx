@@ -6,6 +6,7 @@ interface ISettingsProps {
 
 }
 
+// eslint-disable-next-line no-empty-pattern
 const Settings = ({}: ISettingsProps) => {
     return (
         <div className={styles.container}>

@@ -1,6 +1,7 @@
 {
     "name": "Readero",
     "short_name": "Readero",
+    "start_url": ".",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
@@ -13,6 +14,7 @@
             "type": "image/png"
         }
     ],
+    "orientation": "portrait",
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
     "display": "standalone"

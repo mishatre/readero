@@ -1,6 +1,7 @@
 {
   "name": "readero",
   "version": "0.1.0",
+  "homepage": "https://mishatre.github.io/readero",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.0",
@@ -31,6 +32,7 @@
     "react-virtualized-auto-sizer": "^1.0.5",
     "react-window": "^1.8.6",
     "sass": "^1.35.1",
+    "serve": "^12.0.0",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
   },
@@ -41,6 +43,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "serve": "serve ./build",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
   },

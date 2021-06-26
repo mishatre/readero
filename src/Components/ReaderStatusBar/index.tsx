@@ -6,6 +6,7 @@ import { timestampToHumanTime } from 'utils/time';
 import styles from './styles.module.scss';
 
 interface IReaderStatusBarProps {
+    mode: 'view' | 'play' | 'pause';
     hidden: boolean;
     totalWords: number;
     currentWord: number;
@@ -16,6 +17,7 @@ interface IReaderStatusBarStyleProps extends React.CSSProperties {
 }
 
 const ReaderStatusBar = ({
+    mode,
     hidden,
     totalWords,
     currentWord,
@@ -31,7 +33,7 @@ const ReaderStatusBar = ({
     const wordsLeft = totalWords - currentWord;
 
     return (
-        <div className={cn(styles.container, { [styles.hidden]: hidden })}>
+        <div className={cn(styles.container, { [styles.hidden]: hidden, [styles.playing]: mode !== 'view' })}>
             <div
                 className={styles.statusBar}
                 style={

@@ -13,6 +13,13 @@
         visibility: hidden;
     }
 
+    &.playing {
+        .statusBar {
+            background-color: #9e8d83;
+            transition: background-color 300ms linear;
+        }
+    }
+
     .statusBar {
         position: relative;
 
@@ -20,7 +27,9 @@
 
         height: 2.8px;
         width: 100%;
+
         background-color: rgba(218, 218, 218, 0.8);
+        transition: background-color 300ms linear;
         border-radius: 5px;
 
         &:after {

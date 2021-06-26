@@ -182,6 +182,7 @@ const BookReader = ({ info, text, onBack }: IBookReaderProps) => {
                     onSpeedDown={onSpeedDown}
                 />
                 <ReaderStatusBar
+                    mode={mode}
                     hidden={uiHidden}
                     totalWords={info.totalWords}
                     currentWord={stats.index}

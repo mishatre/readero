@@ -7,9 +7,9 @@ interface IMenuProps {
 
 }
 
+// eslint-disable-next-line no-empty-pattern
 const Menu = ({}: IMenuProps) => {
     const location = useLocation();
-    console.log(location)
     return (
         <div className={styles.container}>
             <Link

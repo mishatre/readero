@@ -26,7 +26,7 @@ const Providers = ({ children }: IProvidersProps) => {
 
     return (
         <Provider store={store}>
-            <Router >
+            <Router basename="readero">
                  <SettingsProvider>
                      <ReadingStatsProvider>
                          <StorageProvider>
