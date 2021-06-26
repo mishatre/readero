@@ -1,31 +1,20 @@
 import cn from 'classnames';
-import { useEffect, useRef, useState } from 'react';
 
 import styles from './styles.module.scss';
 
 interface IORPWordProps {
     word: string;
+    maxOffset: number;
 }
 
-const ORPWord = ({ word }: IORPWordProps) => {
-    const ref = useRef<HTMLDivElement>(null);
-
-    const [maxOffset, setMaxOffset] = useState(5);
-    useEffect(() => {
-        const maxWordsCount = Math.floor(
-            (ref.current?.offsetWidth || 0) / 28.9233
-        );
-        setMaxOffset(Math.ceil((maxWordsCount * 2 - 1) / 4) + 1 - 2);
-    }, []);
-
+const ORPWord = ({ word, maxOffset }: IORPWordProps) => {
     const orp = Math.ceil((word.length - 1) / 4) + 1;
 
     return (
         <div
-            ref={ref}
             style={{
                 textAlign: 'left',
-                fontFamily: 'Lucida console',
+                fontFamily: 'Liberation Mono',
                 lineHeight: '72px',
             }}
         >

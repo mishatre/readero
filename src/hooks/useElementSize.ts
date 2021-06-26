@@ -29,11 +29,17 @@ function useElementSize<T extends HTMLElement = HTMLDivElement>(
 
     // Initial size on mount
     useEffect(() => {
-        updateSize();
+        const node = elementRef?.current;
+        if (node) {
+            const observer = new ResizeObserver(updateSize);
+            observer.observe(node, { box: 'content-box' })
+            updateSize();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    useEffect(() => { }, []);
 
-    useEventListener('resize', updateSize);
+    // useEventListener('resize', updateSize);
 
     return size;
 }
