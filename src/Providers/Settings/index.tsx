@@ -33,8 +33,15 @@ const settingsList = [
     'slowDownOnLongWords',
 ] as const;
 
+const fontSettings = {
+    fontFamily: 'Liberation Mono',
+    fontSizeRSVP: 48,
+    fontSizeReader: 16,
+    linHeight: 'normal',
+}
+
 const defaultSettings = {
-    fontFamily: 'Kazemir',
+    fontFamily: 'Liberation Mono',
     fontSize: 48,
     wordsPerMinute: 320,
     ORP: true,

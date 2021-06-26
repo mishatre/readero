@@ -5,8 +5,6 @@ import Providers from './Providers';
 import Reader from './Pages/Reader';
 import Library from './Pages/Library';
 
-import './App.css';
-
 function App() {
   return (
     <Providers>
