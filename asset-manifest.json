@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/readero/static/css/main.de163c6f.chunk.css",
-    "main.js": "/readero/static/js/main.e506561d.chunk.js",
-    "main.js.map": "/readero/static/js/main.e506561d.chunk.js.map",
+    "main.js": "/readero/static/js/main.aeb3c4d6.chunk.js",
+    "main.js.map": "/readero/static/js/main.aeb3c4d6.chunk.js.map",
     "runtime-main.js": "/readero/static/js/runtime-main.4add69da.js",
     "runtime-main.js.map": "/readero/static/js/runtime-main.4add69da.js.map",
     "static/js/2.d46813fe.chunk.js": "/readero/static/js/2.d46813fe.chunk.js",
@@ -28,6 +28,6 @@
     "static/js/runtime-main.4add69da.js",
     "static/js/2.d46813fe.chunk.js",
     "static/css/main.de163c6f.chunk.css",
-    "static/js/main.e506561d.chunk.js"
+    "static/js/main.aeb3c4d6.chunk.js"
   ]
 }
