@@ -1,83 +1,52 @@
-import { ReactComponent as PlayIcon } from '../../assets/icons/play-solid.svg';
-import { ReactComponent as PauseIcon } from '../../assets/icons/pause-solid.svg';
-import { ReactComponent as MinusIcon } from '../../assets/icons/minus-solid.svg';
-import { ReactComponent as PlusIcon } from '../../assets/icons/plus-solid.svg';
+import { memo } from 'react';
+import cn from 'classnames';
+
+import { useSettings } from 'Providers/Settings';
+
+import { ReactComponent as PlayIcon } from 'assets/icons/play-solid.svg';
+import { ReactComponent as PauseIcon } from 'assets/icons/pause-solid.svg';
+import { ReactComponent as MinusIcon } from 'assets/icons/minus-solid.svg';
+import { ReactComponent as PlusIcon } from 'assets/icons/plus-solid.svg';
 
 import styles from './styles.module.scss';
-import { completionRate, timeToRead } from '../../utils/wordTime';
-import { useCallback } from 'react';
 
 interface IReaderControlsProps {
-    isPlaying: boolean;
-
-    onChangeSpeed: (inc: number) => void;
+    hide: boolean;
+    mode: 'view' | 'play' | 'pause';
     togglePlay: () => void;
-
-    wordsCount: number;
-    currentIndex: number;
-    wordsPerMinute: number;
 }
 
-const ReaderControls = ({
-    isPlaying,
+const INCREMENT_VALUE = 20;
 
-    togglePlay,
-    onChangeSpeed,
-
-    wordsCount,
-    currentIndex,
-    wordsPerMinute,
-}: IReaderControlsProps) => {
-    const completed = completionRate(wordsCount, currentIndex);
-    const ttr = timeToRead(wordsCount, currentIndex, wordsPerMinute);
-
-    const speedDownHanlder = useCallback(
-        (e: React.MouseEvent) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onChangeSpeed(-20);
-        },
-        [onChangeSpeed]
-    );
-
-    const speedUpHanlder = useCallback(
-        (e: React.MouseEvent) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onChangeSpeed(20);
-        },
-        [onChangeSpeed]
-    );
-
-    if (isPlaying) {
-        return null;
-    }
+const ReaderControls = ({ hide, mode, togglePlay }: IReaderControlsProps) => {
+    const { settings, set } = useSettings();
 
     return (
-        <div className={styles.container} onClick={togglePlay}>
-            <div className={styles.topLine} />
-            <div className={styles.controls}>
-                <MinusIcon
-                    className={styles.button}
-                    onClick={speedDownHanlder}
-                />
-                <div className={styles.wordsPerMinute}>
-                    {wordsPerMinute} <br /> word/m
-                </div>
-                <PlusIcon className={styles.button} onClick={speedUpHanlder} />
-            </div>
-            <div className={styles.stats}>
+        <div className={cn(styles.container, { [styles.hidden]: hide })}>
+            <div className={styles.buttons}>
                 <div
-                    className={styles.bar}
-                    style={{ '--total': `${completed}%` } as any}
-                />
-                <div className={styles.bottom}>
-                    <div>{ttr}</div>
-                    <div>{completed}%</div>
+                    className={styles.button}
+                    onClick={() =>
+                        set('wordsPerMinute', (prev) => prev - INCREMENT_VALUE)
+                    }
+                >
+                    <MinusIcon />
+                </div>
+                <div className={styles.button} onClick={togglePlay}>
+                    {mode === 'play' ? <PauseIcon /> : <PlayIcon />}
+                </div>
+                <div
+                    className={styles.button}
+                    onClick={() =>
+                        set('wordsPerMinute', (prev) => prev + INCREMENT_VALUE)
+                    }
+                >
+                    <PlusIcon />
                 </div>
             </div>
+            <div className={styles.bottom}>{settings.wordsPerMinute}</div>
         </div>
     );
 };
 
-export default ReaderControls;
+export default memo(ReaderControls);

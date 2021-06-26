@@ -2,16 +2,17 @@ import Book from '../../Components/Book';
 import styles from './styles.module.scss';
 
 import { useLibraryContext } from '../../Providers/Library';
-import { useReadingStatsContext } from '../../Providers/ReadingStats';
+// import { useReadingStatsContext } from '../../Providers/ReadingStats';
 
 import useFileInput from '../../hooks/useFileInput';
 import { useCallback } from 'react';
 
-import { ReactComponent as PlusIcon } from '../../assets/icons/plus-solid.svg';
+import AppHeader from 'Components/AppHeader';
+import useBackgroundColor from 'hooks/useBackgroundColor';
 
 const Library = () => {
     const { library, loadBooks } = useLibraryContext();
-    const { getBookStats } = useReadingStatsContext();
+    // const { getBookStats } = useReadingStatsContext();
 
     const onAdd = useFileInput({ multiple: true }, async (files: File[]) => {
         if (files.length === 0) {
@@ -22,14 +23,11 @@ const Library = () => {
 
     const onBookClick = useCallback((id: string) => {}, []);
 
+    useBackgroundColor('#FEFEFE');
+
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
-                <div className={styles.title}>Library</div>
-                <div className={styles.add} onClick={onAdd}>
-                    <PlusIcon />
-                </div>
-            </div>
+            <AppHeader title="Library" onBookAdd={onAdd} />
             <div className={styles.listContainer}>
                 <div className={styles.list}>
                     {library.map((book) => (

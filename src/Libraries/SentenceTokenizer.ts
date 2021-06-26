@@ -16,14 +16,14 @@ SentenceTokenizer.trim = function (array: string[]) {
 
 SentenceTokenizer.tokenize = function (text: string): string[] {
     // break string up in to sentences based on punctation and quotation marks
-    let tokens = text.match(/(?<=\s+|^)["'‘“'"[({⟨]?(.*?[.?!])(\s[.?!])*["'’”'"\])}⟩]?(?=\s+|$)|(?<=\s+|^)\S(.*?[.?!])(\s[.?!])*(?=\s+|$)/g);
-
+    // let tokens = text.match(/(?<=\s+|^)["'‘“'"[({⟨]?(.*?[.?!])(\s[.?!])*["'’”'"\])}⟩]?(?=\s+|$)|(?<=\s+|^)\S(.*?[.?!])(\s[.?!])*(?=\s+|$)/g);
+    let tokens = null;
     if (!tokens) {
       return [text]
     }
 
     // remove unecessary white space
-    tokens = tokens.map(Function.prototype.call, String.prototype.trim);
+    tokens = (tokens as any).map(Function.prototype.call, String.prototype.trim);
 
     return this.trim(tokens);
 }

@@ -6,30 +6,59 @@ interface SettingsState {
     fontFamily: string;
     fontSizeRSVP: number;
     fontSizeReader: number;
+    fontWidthRSVP: number;
+    fontWidthReader: number;
 }
 
 const initialState: SettingsState = {
     fontFamily: '',
     fontSizeRSVP: 42,
     fontSizeReader: 16,
-} as const;
+    fontWidthRSVP: 0, 
+    fontWidthReader: 0,
+};
 
 const settingsSlice = createSlice({
     name: 'settings',
     initialState,
     reducers: {
-        setValue: (state, action: PayloadAction<{ key: keyof SettingsState, value: SettingsState[typeof key] }>) => {
-            const { key, value } = action.payload;
-            state[key] = value;
-        }
+        setFontFamily: (state, action: PayloadAction<string>) => {
+            state.fontFamily = action.payload;
+            // Calculate font width;
+        },
+        setFontSizeRSVP: (state, action: PayloadAction<number>) => {
+            state.fontSizeRSVP = action.payload;
+            // Calculate font width;
+        },
+        setFontSizeReader: (state, action: PayloadAction<number>) => {
+            state.fontSizeReader = action.payload;
+            // Calculate font width;
+        },
+
     },
 })
 
 export const {
-    setValue,
+    setFontFamily,
+    setFontSizeRSVP,
+    setFontSizeReader,
 } = settingsSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectSettings = (state: RootState) => state;
+export const selectSettings = (state: RootState, type: 'RSVP' | 'Reader') => {
+    if(type === 'RSVP') {
+        return {
+            fontFamily: state.settings.fontFamily,
+            fontSize: state.settings.fontSizeRSVP,
+            fontWidth: state.settings.fontWidthRSVP,
+        }
+    } else {
+        return {
+            fontFamily: state.settings.fontFamily,
+            fontSize: state.settings.fontSizeReader,
+            fontWidth: state.settings.fontWidthReader,
+        }
+    }
+};
 
 export default settingsSlice.reducer;

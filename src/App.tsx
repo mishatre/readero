@@ -1,6 +1,6 @@
 
 import { Switch, Route } from 'react-router-dom';
-import Providers from './Providers';
+import Providers from 'Providers';
 
 import Reader from './Pages/Reader';
 import Library from './Pages/Library';

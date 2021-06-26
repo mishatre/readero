@@ -79,6 +79,7 @@ function useReadingStats(id: string) {
     );
     useEffect(() => {
         setStatsState(getStats(id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
     return { stats, setStats };
 }

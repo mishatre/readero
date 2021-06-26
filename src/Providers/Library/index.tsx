@@ -1,20 +1,10 @@
-import createCtx from '../../utils/context';
+import createCtx from 'utils/context';
 import localforage from 'localforage';
 import { useCallback, useEffect, useState } from 'react';
-import epubToTxt from '../../Libraries/epubToTxt';
+import epubToTxt from 'Libraries/epubToTxt';
 
 interface ILibraryProviderProps {
     children: React.ReactNode;
-}
-
-interface ILibraryRecord {
-    id: string;
-    title: string;
-    creator?: string;
-    cover: boolean;
-
-    totalWords: number;
-    totalSentences: number;
 }
 
 export interface IBookInfo {

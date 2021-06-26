@@ -1,5 +1,21 @@
 
 @font-face {
-    font-family: "Liberaion Mono";
-    src: url("../assets/fonts/LiberationMono/Liberation Mono.woff2")
-}
+    font-family: 'Cousine';
+    src: url('../assets/fonts/Cousine/Cousine-Bold.ttf') format('ttf');
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Cousine';
+    src: url('../assets/fonts/Cousine/Cousine-Regular.ttf') format('ttf');
+    font-weight: 400;
+    font-style: normal;
+  }
+      
+  @font-face {
+    font-family: 'Cousine';
+    src: url('../assets/fonts/Cousine/Cousine-Bold.ttf') format('ttf');
+    font-weight: 700;
+    font-style: normal;
+  }

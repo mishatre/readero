@@ -326,7 +326,7 @@ async function loadCover(
         return null;
     }
 
-    const [path, _] = rootFile?.name.split('/');
+    const [path] = rootFile?.name.split('/');
     const filePath = [path, cover.href].join('/');
     const blob = await archive.files[filePath].async('blob');
 
@@ -344,7 +344,7 @@ async function loadItems(
     rootFile: JsZip.JSZipObject,
     processingItems: Array<{ href: string }>
 ) {
-    const [path, _] = rootFile?.name.split('/');
+    const [path] = rootFile?.name.split('/');
 
     const loadingItems = [];
     for (const { href } of processingItems) {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /** Milliseconds representing forever in the future. */
 const never = Number.MAX_SAFE_INTEGER;

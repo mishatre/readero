@@ -1,9 +1,9 @@
 import cn from 'classnames';
 import { Link } from 'react-router-dom';
-import { timeToRead, completionRate } from '../../utils/wordTime';
+// import { timeToRead, completionRate } from '../../utils/wordTime';
 import styles from './styles.module.scss';
 
-import { IBookInfo } from '../../Providers/Library';
+import { IBookInfo } from 'Providers/Library';
 import { useRef } from 'react';
 
 interface IBookProps {
@@ -19,9 +19,9 @@ function Book({ book, stats, onClick }: IBookProps) {
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    const completed = completionRate(1500, 1000);
-    const ttr = timeToRead(1500, 1000, 320);
-    console.log(book)
+    // const completed = completionRate(1500, 1000);
+    // const ttr = timeToRead(1500, 1000, 320);
+    // console.log(book)
     return (
         <Link to={`/book/${book.id}`} className={styles.container}>
             <div
