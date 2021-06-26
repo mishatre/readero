@@ -1,7 +1,7 @@
 {
     "name": "Readero",
     "short_name": "Readero",
-    "start_url": "./readero",
+    "start_url": ".",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
