@@ -5,49 +5,39 @@
     user-select: none;
 
     .ORPGuideline {
+
+        position: relative;
+
+        border-top: 3px solid #000;
+        border-bottom: 3px solid #000;
+        &::before, &::after {
+            position: absolute;
+            content: ' ';
+            margin-left: var(--orpPos);
+            width: 4px;
+            height: 12px;
+            background-color: black;
+            left: 0;
+        }
+        &::before {
+            top:0;
+        }
+        &::after {
+            bottom: 0;
+        }
+
         &.disabled {
-            .topLine,
-            .bottomLine {
-                background-color: transparent;
-                &::after {
-                    background-color: transparent;
-                }
+            border-top: 3px solid transparent;
+            border-bottom: 3px solid transparent;
+            &::before, &::after {
+                visibility: hidden;
             }
         }
 
-        .topLine {
-            width: 100%;
-            height: 3px;
-            background-color: black;
-            &::after {
-                margin-left: var(--orpPos);
-                position: absolute;
-                content: ' ';
-                height: 12px;
-                width: 4px;
-                background-color: black;
-            }
-        }
-
-        .bottomLine {
-            width: 100%;
-            margin-top: 6px;
-            height: 3px;
-            background-color: black;
-            &::after {
-                margin-top: -9px;
-                margin-left: var(--orpPos);
-                position: absolute;
-                content: ' ';
-                height: 12px;
-                width: 4px;
-                background-color: black;
-            }
-        }
     }
 
-    &.orp {
-        .orpChar {
+    .orp {
+        :nth-child(2) {
             color: red;
         }
     }

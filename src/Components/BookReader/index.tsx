@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import useBackgroundColor from 'hooks/useBackgroundColor';
+import useElementSize from 'hooks/useElementSize';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { IBookInfo } from '../../Providers/Library';
 import { useReadingStats } from '../../Providers/ReadingStats';
@@ -28,23 +29,23 @@ const BookReader = ({ info, text }: IBookReaderProps) => {
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    useEffect(() => {
-        // Super laggy
-        if (mode === 'play' && !uiHidden) {
-            timerRef.current = setTimeout(() => {
-                if (mode === 'play') {
-                    setUiHidden(true);
-                }
-                timerRef.current = null;
-            }, 2000);
-            return () => {
-                if (timerRef.current) {
-                    clearTimeout(timerRef.current);
-                    timerRef.current = null;
-                }
-            };
-        }
-    }, [mode, uiHidden]);
+    // useEffect(() => {
+    //     // Super laggy
+    //     if (mode === 'play' && !uiHidden) {
+    //         timerRef.current = setTimeout(() => {
+    //             if (mode === 'play') {
+    //                 setUiHidden(true);
+    //             }
+    //             timerRef.current = null;
+    //         }, 2000);
+    //         return () => {
+    //             if (timerRef.current) {
+    //                 clearTimeout(timerRef.current);
+    //                 timerRef.current = null;
+    //             }
+    //         };
+    //     }
+    // }, [mode, uiHidden]);
 
     const onGoBack = useCallback(() => {
         if (mode === 'pause' || mode === 'play') {
@@ -82,6 +83,9 @@ const BookReader = ({ info, text }: IBookReaderProps) => {
         }
     }, [mode, uiHidden]);
 
+    const ref = useRef<HTMLDivElement>(null);
+    const { width } = useElementSize(ref);
+
     return (
         <div
             className={cn(styles.container, {
@@ -96,8 +100,9 @@ const BookReader = ({ info, text }: IBookReaderProps) => {
                 title={info.title}
             />
             <div className={styles.content}>
-                <div className={styles.reader}>
+                <div ref={ref} className={styles.reader}>
                     <RSVPReader
+                        width={width}
                         mode={mode}
                         text={text}
                         initialIndex={stats.index}

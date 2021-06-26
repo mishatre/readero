@@ -3,10 +3,10 @@ import cn from 'classnames';
 import useAccurateTimer from 'hooks/useAccurateTimer';
 import clamp from 'utils/clamp';
 import styles from './styles.module.scss';
-import ORPWord from './ORPWord';
 import { useSettings } from 'Providers/Settings';
 
 interface IRSVPReaderProps {
+    width: number;
     mode: 'view' | 'play' | 'pause';
     text: string;
     initialIndex?: number;
@@ -29,7 +29,7 @@ function usePrevious(value: any) {
 }
 
 const getOrpPos = (length: number) => {
-    return Math.ceil((length - 1) / 4) + 1;
+    return length === 1 ? 1 : Math.ceil((length - 1) / 4) + 1;
 }
 
 class CharMeasurer {
@@ -37,9 +37,9 @@ class CharMeasurer {
     private templateChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnoprstuvwxyz1234567890~!@#$%^&*()_+={}:'\"\\,./<>?";
     private chars: Map<string, number> = new Map();
     constructor() {
-        this.ctx = new OffscreenCanvas(1,1).getContext('2d')!;
-        this.ctx.font = `${48}px "Lucida console"`;
-        this.measureChars();  
+        this.ctx = new OffscreenCanvas(1, 1).getContext('2d')!;
+        this.ctx.font = `${48}px "Liberation Mono"`;
+        this.measureChars();
     }
     private measure(char: string) {
         return this.ctx.measureText(char).width
@@ -53,8 +53,8 @@ class CharMeasurer {
     longestWidth() {
         let maxWidth = 0;
         this.chars.forEach((width, char) => {
-            if(width > maxWidth) {
-                console.log(char)
+            if (width > maxWidth) {
+                // console.log(char)
                 maxWidth = width;
             }
         });
@@ -62,7 +62,7 @@ class CharMeasurer {
     }
     measureChar(char: string) {
         let charWidth = this.chars.get(char);
-        if(!charWidth) {
+        if (!charWidth) {
             charWidth = this.measure(char);
             this.chars.set(char, charWidth);
         }
@@ -72,39 +72,49 @@ class CharMeasurer {
 
 const measurer = new CharMeasurer();
 
-function useORPWord({ word, }: { word: string }) {
+function useORPWord({ word, width }: { word: string; width: number; }) {
 
-    const [{ orpMiddlePointPx }, set] = useState({
+    console.log(width)
+
+    const [{ orpMiddlePointPx, maxOffset, maxWords }, set] = useState({
+        maxOffset: 0,
+        maxWords: 0,
         orpMiddlePointPx: 0,
     });
 
     useEffect(() => {
 
-        const maxWords = Math.floor(331/measurer.longestWidth());
-        const orpPos = getOrpPos(maxWords) * measurer.longestWidth() + measurer.longestWidth()/2;
+        const maxWords = Math.floor((width || 0) / measurer.longestWidth()) - 1;
+        const orpPos = getOrpPos(maxWords) * measurer.longestWidth() + measurer.longestWidth() / 2;
+        const maxOffset = getOrpPos(maxWords) + 1;
+
         set({
+            maxOffset,
+            maxWords: maxWords - (maxOffset - getOrpPos(maxWords)),
             orpMiddlePointPx: orpPos,
         })
 
-    }, []);
+    }, [width]);
 
-    useEffect(() => {
+    let r = word.trim().substr(0, maxWords);
 
-        const trimmedWord = word.replaceAll(/^[^a-zа-я\d]*|[^a-zа-я\d]*$/gi, '');
-        const length = trimmedWord.split('').map(v => measurer.measureChar(v));
+    const trimmedWord = r.replaceAll(/^[^a-zа-я\d]*|[^a-zа-я\d]*$/gi, '');
+    // const length = trimmedWord.split('').map(v => measurer.measureChar(v));
+    const orp = getOrpPos(trimmedWord.length);
 
-        console.log(getOrpPos(trimmedWord.length), length, measurer.measureChar('W'), measurer.longestWidth());
-        
-        // 32
+    const lpad = ''.padStart(maxOffset - orp, '\u00A0');
+    const chars = [
+        lpad + r.substr(0, orp - 1),
+        r[orp - 1],
+        trimmedWord.length > 2 ? r.substr(orp) : ''
+    ];
 
-
-    }, [word]);
-
-    return { orpMiddlePointPx };
+    return { chars, orpMiddlePointPx, maxOffset };
 
 }
 
 const RSVPReader = ({
+    width,
     mode,
     text,
     initialIndex = 0,
@@ -181,7 +191,7 @@ const RSVPReader = ({
 
             set(state);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [prevMode, mode]);
 
     useEffect(() => {
@@ -206,8 +216,10 @@ const RSVPReader = ({
 
     const delay = (60 / settings.wordsPerMinute) * 1000;
     useAccurateTimer(mode === 'play' && hasNextWord, delay, onTick);
-
-    const { orpMiddlePointPx } = useORPWord({ word: currentWord });
+    const { chars, orpMiddlePointPx } = useORPWord({
+        word: currentWord,
+        width,
+    });
 
     if (mode === 'view') {
         return null;
@@ -215,23 +227,24 @@ const RSVPReader = ({
 
     return (
         <div
-            className={cn(styles.container, {
-                [styles.orp]: settings.ORP,
-            })}
+            className={styles.container}
             style={{
                 fontFamily: settings.fontFamily,
                 fontSize: `${settings.fontSize}px`,
             }}
         >
-            <div 
-                className={cn(styles.ORPGuideline, { [styles.disabled]: !settings.ORPGuideLine })}
+            <div
+                className={cn(styles.ORPGuideline, {
+                    [styles.disabled]: !settings.ORPGuideLine,
+                    [styles.orp]: settings.ORP,
+                })}
                 style={{
                     '--orpPos': `${orpMiddlePointPx}px`,
+                    fontFamily: 'Liberation Mono',
+                    lineHeight: '72px',
                 } as any}
             >
-                <div className={styles.topLine}/>
-                    {currentWord ? <ORPWord word={currentWord} /> : <>&nbsp;</>}
-                <div className={styles.bottomLine}/>
+                {chars.map((v, i) => <span key={i}>{v}</span>)}
             </div>
         </div>
     );
