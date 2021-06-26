@@ -1,7 +1,7 @@
 {
     "name": "Readero",
     "short_name": "Readero",
-    "start_url": "./readero",
+    "start_url": "https://mishatre.github.io/readero/",
     "icons": [
         {
             "src": "/readero/android-chrome-192x192.png",
