@@ -6,6 +6,7 @@ import useElementSize from '../../../hooks/useElementSize';
 import useWrappedTextToArray from '../../../hooks/useWrappedTextToArray';
 
 import styles from './styles.module.scss';
+import { useSettings } from '../../../Providers/Settings';
 
 interface IBookRenderProps {
     mode: 'view' | 'play' | 'pause';
@@ -23,7 +24,8 @@ const BookRender = ({
     const ref = useRef<HTMLDivElement>(null);
     const listRef = useRef<List>(null);
     const { height, width } = useElementSize(ref);
-    const rows = useWrappedTextToArray(text, width);
+    const { settings } = useSettings();
+    const rows = useWrappedTextToArray(text, settings.fontFamily, width);
 
     const [{ currentRowIndex, currentRowWordIndex }, setIndex] = useState({
         currentRowIndex: -1,
@@ -75,7 +77,13 @@ const BookRender = ({
     }
 
     return (
-        <div ref={ref} className={styles.container}>
+        <div
+            ref={ref}
+            className={styles.container}
+            style={{
+                fontFamily: settings.fontFamily,
+            }}
+        >
             <List
                 ref={listRef}
                 height={height}

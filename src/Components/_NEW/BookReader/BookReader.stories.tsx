@@ -4,6 +4,8 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import BookReader from '.';
 import Providers from '../../../Providers';
 
+import 'styles/index.scss';
+
 export default {
     title: 'Reader/BookReader',
     component: BookReader,
