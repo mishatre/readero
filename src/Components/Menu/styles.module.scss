@@ -1,6 +1,8 @@
 
 .container {
 
+    padding-bottom: env(safe-area-inset-bottom);
+
     user-select: none;
 
     grid-area: menu;
@@ -18,6 +20,11 @@
 
     .item {
 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
         &:active {
             background-color: unset;
         }
@@ -28,6 +35,15 @@
 
         &.selected {
             color: black;
+            svg {
+                fill: black;
+            }
+        }
+
+        svg {
+            fill: grey;
+            height: 24px;
+            width: 24px;
         }
 
     }

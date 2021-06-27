@@ -1,6 +1,8 @@
 
 import cn from 'classnames';
 import { Link, useLocation } from 'react-router-dom';
+import { ReactComponent as LibraryIcon } from 'assets/icons/library.svg';
+import { ReactComponent as SettingsIcon } from 'assets/icons/settings.svg';
 import styles from './styles.module.scss';
 
 interface IMenuProps {
@@ -18,6 +20,7 @@ const Menu = ({}: IMenuProps) => {
                     [styles.selected]: location.pathname === '/'
                 })}
             >
+                <LibraryIcon />
                 Library
             </Link>
             <Link
@@ -26,6 +29,7 @@ const Menu = ({}: IMenuProps) => {
                     [styles.selected]: location.pathname === '/settings'
                 })}
             >
+                <SettingsIcon/>
                 Settings
             </Link>
         </div>

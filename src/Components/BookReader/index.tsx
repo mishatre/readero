@@ -127,15 +127,22 @@ const BookReader = ({ info, text, onBack }: IBookReaderProps) => {
         }
     }, [mode, uiHidden]);
 
-    const fontInfo = {
-        fontFamily: 'SFMono',
-        fontSize: 16,
+    const readerFontInfo = {
+        fontFamily: settings.fontFamilyReader,
+        fontSize: settings.fontSizeReader,
         fontWeight: 'normal',
         lineHeight: 17
     }
 
-    const fontWidth = useFontWidth(fontInfo.fontFamily, fontInfo.fontSize)
-    const rows = useWrappedText(text, Math.floor(width / fontWidth));
+    const rsvpFontInfo = {
+        fontFamily: settings.fontFamilyRSVP,
+        fontSize: settings.fontSizeRSVP,
+        fontWeight: 'normal',
+        lineHeight: 17
+    }
+
+    const fontWidth = useFontWidth(readerFontInfo.fontFamily, readerFontInfo.fontSize)
+    const rows = useWrappedText(text, Math.floor((width - 10) / fontWidth));
 
     return (
         <div
@@ -158,14 +165,16 @@ const BookReader = ({ info, text, onBack }: IBookReaderProps) => {
             <div className={styles.content}>
                 <div ref={ref} className={styles.reader}>
                     <RSVPReader
+                        fontInfo={rsvpFontInfo}
                         width={width}
                         mode={mode}
                         text={text}
                         initialIndex={stats.index}
                         onNextWord={onNextWord}
+                        showPreviousOnPause={settings.showPreviousOnPause}
                     />
                     <BookRender
-                        fontInfo={fontInfo}
+                        fontInfo={readerFontInfo}
                         width={width}
                         mode={mode}
                         rows={rows}

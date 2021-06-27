@@ -1,7 +1,6 @@
 import JsZip from 'jszip';
 import parser from 'fast-xml-parser';
 import mime from 'mime-types';
-import SentenceTokenizer from './SentenceTokenizer';
 
 type PickByValue<T, V> = Pick<
     T,
@@ -171,8 +170,8 @@ async function validateRootFile(archive: JsZip) {
 }
 
 async function parseRootFile(archive: JsZip, rootFile: JsZip.JSZipObject) {
-    const text = await rootFile.async('text');
-    const XMLData = parser.parse(text, {
+    const rootFileXML = await rootFile.async('text');
+    const XMLData = parser.parse(rootFileXML, {
         attributeNamePrefix: '',
         attrNodeName: 'attr',
         textNodeName: 'value',
@@ -187,7 +186,7 @@ async function parseRootFile(archive: JsZip, rootFile: JsZip.JSZipObject) {
     const guide = parseGuide(XMLData);
 
     const processingItems = processItems(manifest, spine);
-    const items = await loadItems(archive, rootFile, processingItems);
+    const { text, words } = await loadItems(archive, rootFile, processingItems);
 
     const foundCover = findCover(manifest, guide);
     const cover = await loadCover(archive, rootFile, foundCover);
@@ -195,7 +194,8 @@ async function parseRootFile(archive: JsZip, rootFile: JsZip.JSZipObject) {
     return {
         cover,
         metadata,
-        items,
+        text, 
+        words,
     };
 }
 
@@ -353,23 +353,30 @@ async function loadItems(
     }
     const domParser = new DOMParser();
     const loadedItems = await Promise.all(loadingItems);
-    const parsedItems = loadedItems
-        .map((item) =>
-            SentenceTokenizer.tokenize(
-                (
-                    domParser
-                        .parseFromString(item, 'application/xhtml+xml')
-                        .body.textContent?.trimStart()
-                        ?.trimEnd() + '.'
-                )
-                    .split('\n')
-                    .join('. ')
-            )
-                .map((item) => item.replaceAll('. .', '.'))
-                .filter((item) => item !== '.')
-        )
-        .reduce((acc, v) => [...acc, ...v], []);
-    return parsedItems;
+
+    const chapters = loadedItems.map((item) => '' + domParser
+    .parseFromString(item, 'application/xhtml+xml')
+    .body.textContent);
+
+    const words = [];
+    const textArray = [];
+
+    for(const chapter of chapters) {
+
+        const wordsArray = chapter?.replaceAll('\n', ' ')?.split(' ').filter(v => v !== '');
+
+        if(wordsArray?.length > 0) {
+            words.push(...wordsArray);
+            textArray.push(wordsArray.join(' '))
+        }
+
+    }
+
+    return {
+        text: textArray.join(' '),
+        words,
+    }
+
 }
 
 async function epubToTxt(blob: Blob) {

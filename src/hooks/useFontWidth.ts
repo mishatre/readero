@@ -14,8 +14,6 @@ function measureFont(fontFamily: string, fontSize: number) {
         canvasCtx.textBaseline = 'top';
         const textMetrics = canvasCtx.measureText(text);
         const width = Math.abs(textMetrics.actualBoundingBoxLeft) + Math.abs(textMetrics.actualBoundingBoxRight);
-
-        // console.log(width / text.length)
         return width / text.length;
     }
     

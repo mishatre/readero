@@ -26,7 +26,6 @@ Default.args = {
         title: 'Тот кто хочет выжить',
         cover: false,
 
-        totalSentences: 1000,
         totalWords: textArray.reduce((acc, v) => acc + v.split(' ').length, 0),
     },
     text: textArray.join(' '),

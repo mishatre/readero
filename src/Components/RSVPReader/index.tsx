@@ -4,13 +4,16 @@ import useAccurateTimer from 'hooks/useAccurateTimer';
 import clamp from 'utils/clamp';
 import styles from './styles.module.scss';
 import { useSettings } from 'Providers/Settings';
+import { IFontInfo } from 'types/fontInfo';
 
 interface IRSVPReaderProps {
+    fontInfo: IFontInfo;
     width: number;
     mode: 'view' | 'play' | 'pause';
     text: string;
     initialIndex?: number;
     onNextWord?: (index: number) => void;
+    showPreviousOnPause: boolean;
 }
 
 interface IRSPVReaderState {
@@ -36,13 +39,13 @@ class CharMeasurer {
     private ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
     private templateChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnoprstuvwxyz1234567890~!@#$%^&*()_+={}:'\"\\,./<>?";
     private chars: Map<string, number> = new Map();
-    constructor() {
+    constructor(fontInfo:IFontInfo) {
         if("OffscreenCanvas" in globalThis) {
             this.ctx = new OffscreenCanvas(1, 1).getContext('2d')!;
         } else {
             this.ctx = document.createElement('canvas').getContext('2d')!;
         }        
-        this.ctx.font = `${48}px SFMono`;
+        this.ctx.font = `${fontInfo.fontSize}px ${fontInfo.fontFamily}`;
         this.measureChars();
     }
     private measure(char: string) {
@@ -51,7 +54,8 @@ class CharMeasurer {
     measureChars() {
         this.chars = new Map(this.templateChars.split('').map(v => [v, this.measure(v)]));
     }
-    setFont() {
+    setFont(fontInfo: IFontInfo) {
+        this.ctx.font = `${fontInfo.fontSize}px ${fontInfo.fontFamily}`;
         this.measureChars();
     }
     longestWidth() {
@@ -76,13 +80,19 @@ class CharMeasurer {
 
 
 
-function useORPWord({ word, width }: { word: string; width: number; }) {
+function useORPWord({ fontInfo, word, width }: { fontInfo: IFontInfo; word: string; width: number; }) {
 
     const measureRef = useRef<CharMeasurer | null>(null);
 
     useEffect(() => {
-        measureRef.current = new CharMeasurer();
-    }, []);
+        if(measureRef.current) {
+            measureRef.current.setFont(fontInfo);
+        }
+    }, [fontInfo]);
+
+    useEffect(() => {
+        measureRef.current = new CharMeasurer(fontInfo);
+    }, []);   
 
     const [{ orpMiddlePointPx, maxOffset, maxWords }, set] = useState({
         maxOffset: 0,
@@ -93,9 +103,12 @@ function useORPWord({ word, width }: { word: string; width: number; }) {
     useEffect(() => {
         if(measureRef.current) {
             // console.log(measureRef.current.longestWidth())
+            
             const maxWords = Math.floor((width || 0) / measureRef.current.longestWidth()) - 1;
             const orpPos = getOrpPos(maxWords) * measureRef.current.longestWidth() + measureRef.current.longestWidth() / 2;
             const maxOffset = getOrpPos(maxWords) + 1;
+
+            console.log(measureRef.current.longestWidth())
 
             set({
                 maxOffset,
@@ -123,16 +136,18 @@ function useORPWord({ word, width }: { word: string; width: number; }) {
 }
 
 const RSVPReader = ({
+    fontInfo,
     width,
     mode,
     text,
     initialIndex = 0,
     onNextWord,
+    showPreviousOnPause,
 }: IRSVPReaderProps) => {
     const { settings } = useSettings();
 
     const [
-        { currentWord, currentIndex, hasNextWord },
+        { currentWord, currentIndex, hasNextWord, items },
         set,
     ] = useState<IRSPVReaderState>({
         currentWord: '',
@@ -226,6 +241,7 @@ const RSVPReader = ({
     const delay = (60 / settings.wordsPerMinute) * 1000;
     useAccurateTimer(mode === 'play' && hasNextWord, delay, onTick);
     const { chars, orpMiddlePointPx } = useORPWord({
+        fontInfo,
         word: currentWord,
         width,
     });
@@ -238,10 +254,14 @@ const RSVPReader = ({
         <div
             className={styles.container}
             style={{
-                fontFamily: settings.fontFamily,
-                fontSize: `${settings.fontSize}px`,
+                fontFamily: fontInfo.fontFamily,
+                fontSize: `${fontInfo.fontSize}px`,
             }}
         >
+            
+            <div className={styles.previous}>
+                {mode === 'pause' &&  showPreviousOnPause &&  items.slice(clamp(0, currentIndex - 50, items.length), currentIndex).join(' ')}
+            </div>
             <div
                 className={cn(styles.ORPGuideline, {
                     [styles.disabled]: !settings.ORPGuideLine,

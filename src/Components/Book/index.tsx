@@ -1,27 +1,28 @@
 import cn from 'classnames';
 import { Link } from 'react-router-dom';
 // import { timeToRead, completionRate } from '../../utils/wordTime';
+import { ReactComponent as RestIcon } from 'assets/icons/rest.svg';
 import styles from './styles.module.scss';
 
 import { IBookInfo } from 'Providers/Library';
 import { useRef } from 'react';
+import { timestampToHumanTime } from 'utils/time';
 
 interface IBookProps {
     book: IBookInfo;
-    stats: {
-        completed: string;
-        timeToRead: string;
-    };
+    currentWord: number;
+    wordsPerMinute: number;
     onClick: (id: string) => void;
 }
 
-function Book({ book, stats, onClick }: IBookProps) {
+function Book({ book, currentWord, wordsPerMinute, onClick }: IBookProps) {
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    // const completed = completionRate(1500, 1000);
-    // const ttr = timeToRead(1500, 1000, 320);
-    // console.log(book)
+    const position = Math.floor((100 / book.totalWords) * currentWord);
+    const timeToRead =
+        Math.floor((book.totalWords - currentWord) / (wordsPerMinute / 60)) * 1000;
+
     return (
         <Link to={`/book/${book.id}`} className={styles.container}>
             <div
@@ -52,11 +53,14 @@ function Book({ book, stats, onClick }: IBookProps) {
             </div>
             <div className={styles.bottom}>
                 <div>
-                    {stats.completed !== '100'
-                        ? `${stats.completed} %`
+                    {position !== 100
+                        ? `${position} %`
                         : 'FINISHED'}
                 </div>
-                <div>{stats.timeToRead}</div>
+                <div> {timestampToHumanTime(timeToRead)}</div>
+                <div>
+                    <RestIcon />
+                </div>
             </div>
         </Link>
     );

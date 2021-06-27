@@ -1,5 +1,8 @@
 
 .container {
+
+    padding-top: env(safe-area-inset-top);
+
     height: 42px;
     display: grid;
     grid-template-columns: max-content 1fr max-content;

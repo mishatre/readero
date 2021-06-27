@@ -1,8 +1,26 @@
 .container {
     width: 100%;
     // text-align: center;
-
     user-select: none;
+
+    display: grid;
+    grid-auto-flow: row;
+    grid-row-gap: 16px;
+    margin-top: -3em;
+
+    .previous {
+        font-size: 16px;
+        line-height: 1.5em;
+        height: 4.5em;
+        overflow: scroll;
+
+        display: flex;
+        flex-direction: column-reverse;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
 
     .ORPGuideline {
 

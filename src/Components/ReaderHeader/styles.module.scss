@@ -1,6 +1,9 @@
 .container {
-    height: 38px;
+
+    height: 41px;
     width: 100%;
+
+    padding-top: env(safe-area-inset-top);
 
     display: grid;
     grid-template-columns: max-content 1fr max-content;
@@ -25,21 +28,22 @@
     }
 
     .button {
-        width: 32px;
+        height: 40px;
+        width: 60px;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    .backButton {
-        margin-left: 12px;
-    }
+    // .backButton {
+    //     margin-left: 12px;
+    // }
 
     .buttons {
-        padding-right: 12px;
+        // padding-right: 12px;
         display: grid;
         grid-template-columns: repeat(3, max-content);
-        grid-column-gap: 32px;
+        // grid-column-gap: 32px;
         justify-content: flex-end;
     }
 }

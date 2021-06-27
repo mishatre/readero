@@ -14,7 +14,6 @@ export interface IBookInfo {
     cover: string | boolean;
 
     totalWords: number;
-    totalSentences: number;
 }
 
 interface ILibraryContext {
@@ -25,7 +24,7 @@ interface ILibraryContext {
 
     getBook: (id: string) => Promise<{
         info: IBookInfo;
-        items: string[];
+        text: string;
     }>;
 }
 
@@ -67,11 +66,11 @@ const LibraryProvider = ({ children }: ILibraryProviderProps) => {
                 Array.from(files).map((file) => epubToTxt(file))
             );
 
-            const loadedBooks = parsedBooks.map((book) => {
-                const totalWords = book.items.reduce(
-                    (acc, item) => acc + item.split(' ').length,
-                    0
-                );
+            const loadedBooks = parsedBooks
+            .filter(book => {
+                return !library.find((item) => item.id === book.metadata.identifier);
+            })
+            .map((book) => {
 
                 const bookInfo = {
                     id: book.metadata.identifier,
@@ -79,14 +78,13 @@ const LibraryProvider = ({ children }: ILibraryProviderProps) => {
                     creator: book.metadata.creator || '',
                     cover: !!book.cover,
 
-                    totalWords,
-                    totalSentences: book.items.length,
+                    totalWords: book.words.length,
                 };
 
                 return {
                     id: bookInfo.id,
                     info: bookInfo,
-                    items: book.items,
+                    text: book.text,
                     cover: book.cover,
                     coverUrl: book.cover
                         ? URL.createObjectURL(book.cover)
@@ -95,8 +93,8 @@ const LibraryProvider = ({ children }: ILibraryProviderProps) => {
             });
 
             await Promise.all(
-                loadedBooks.map(({ id, items }) =>
-                    localforage.setItem(id, items)
+                loadedBooks.map(({ id, text }) =>
+                    localforage.setItem(id, text)
                 )
             );
 
@@ -131,11 +129,11 @@ const LibraryProvider = ({ children }: ILibraryProviderProps) => {
 
     const getBook = useCallback(
         async (id: string) => {
-            const items = (await localforage.getItem<string[]>(id)) || [];
+            const text = (await localforage.getItem<string>(id)) || '';
             const info = library!.find((item) => item.id === id)!;
             return {
                 info,
-                items,
+                text,
             };
         },
         [library]

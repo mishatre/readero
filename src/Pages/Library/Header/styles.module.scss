@@ -1,6 +1,9 @@
 
 .container {
-    height: 42px;
+
+    padding-top: env(safe-area-inset-top);
+
+    height: 41px;
     display: grid;
     grid-template-columns: max-content 1fr max-content;
     justify-items: center;
@@ -20,8 +23,8 @@
 
     .leftButton {
         
-        height: 42px;
-        width: 48px;
+        height: 40px;
+        width: 60px;
 
         display: flex;
         justify-content: center;
@@ -34,21 +37,26 @@
 
     }
 
+    .selectAllButton {
+        padding-left: 12px;
+        width: unset;
+        min-width: 60px;
+    }
+
     .rightButton {
-        height: 42px;
-        width: 48px;
+
+        height: 40px;
+        width: 60px;
 
         display: flex;
         justify-content: center;
         align-items: center;
 
         font-style: normal;
-        font-weight: bold;
+        // font-weight: bold;
         font-size: 16px;
-        line-height: 19px;
-        /* identical to box height */
-
-        letter-spacing: 0.03em;
+        line-height: 20px;
+        letter-spacing: 0.005em;
 
     }
 

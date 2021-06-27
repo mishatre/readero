@@ -63,6 +63,7 @@ const BookRender = ({
             className={styles.container}
             style={{
                 fontFamily: fontInfo.fontFamily,
+                fontSize: fontInfo.fontSize,
             }}
         >
             <List

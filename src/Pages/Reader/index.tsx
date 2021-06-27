@@ -9,16 +9,15 @@ function useBook(id: string) {
     const { getBook } = useLibraryContext();
 
     const [bookData, setBook] =
-        useState<{ info: IBookInfo; items: string[]; text: string[] } | null>(
+        useState<{ info: IBookInfo; text: string } | null>(
             null
         );
 
     useEffect(() => {
-        getBook(id).then(({ info, items }) => {
+        getBook(id).then(({ info, text }) => {
             setBook({
                 info,
-                items,
-                text: items.join(' ').split(' '),
+                text,
             });
         });
     }, [id, getBook]);
@@ -33,8 +32,6 @@ const Reader = () => {
     const history = useHistory();
     const onBack = useCallback(() => history.goBack(), [history]);
 
-    
-
     return (
         <div className={styles.container}>
             {bookInfo && 
@@ -42,10 +39,9 @@ const Reader = () => {
                     info={{
                         ...bookInfo.info,
 
-                        totalSentences: 1000,
                         totalWords: bookInfo.text.length
                     }}
-                    text={bookInfo.text.join(' ')}
+                    text={bookInfo.text}
 
                     onBack={onBack}
                 />

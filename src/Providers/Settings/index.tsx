@@ -16,21 +16,27 @@ interface ISettingsContext {
 }
 
 export interface ISettings {
-    fontFamily: string;
-    fontSize: number;
+    fontFamilyRSVP: string;
+    fontFamilyReader: string;
+    fontSizeRSVP: number;
+    fontSizeReader: number;
     wordsPerMinute: number;
     ORP: boolean;
     ORPGuideLine: boolean;
     slowDownOnLongWords: boolean;
+    showPreviousOnPause: boolean;
 }
 
 const settingsList = [
-    'fontFamily',
-    'fontSize',
+    'fontFamilyRSVP',
+    'fontFamilyReader',
+    'fontSizeRSVP',
+    'fontSizeReader',
     'wordsPerMinute',
     'ORP',
     'ORPGuideLine',
     'slowDownOnLongWords',
+    'showPreviousOnPause'
 ] as const;
 
 // const fontSettings = {
@@ -41,12 +47,15 @@ const settingsList = [
 // }
 
 const defaultSettings = {
-    fontFamily: 'Liberation Mono',
-    fontSize: 48,
+    fontFamilyRSVP: 'SFMono',
+    fontFamilyReader: 'Liberation Mono',
+    fontSizeRSVP: 32,
+    fontSizeReader: 16,
     wordsPerMinute: 320,
     ORP: true,
     ORPGuideLine: true,
     slowDownOnLongWords: true,
+    showPreviousOnPause: true,
 };
 
 const [useSettings, Provider] = createCtx<ISettingsContext>();

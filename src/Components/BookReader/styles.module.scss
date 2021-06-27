@@ -3,6 +3,8 @@
     display: grid;
     grid-template-rows: max-content minmax(min-content, 1fr);
 
+    padding-bottom: env(safe-area-inset-bottom);
+
     .content {
         display: grid;
         grid-template-rows: minmax(max-content, 1fr) max-content max-content;

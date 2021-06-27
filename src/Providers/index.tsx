@@ -1,4 +1,4 @@
-import { BrowserRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import SettingsProvider from './Settings';
 import StorageProvider from './Library';
@@ -18,7 +18,7 @@ const Providers = ({ children }: IProvidersProps) => {
     useEffect(() => {
         Promise.all([
             (document as any).fonts.load('16px Liberation Mono'),
-            (document as any).fonts.load('48px SFMono')
+            (document as any).fonts.load('32px SFMono')
         ]).then(() => {
             setLoaded(true);
         })
@@ -26,7 +26,7 @@ const Providers = ({ children }: IProvidersProps) => {
 
     return (
         <Provider store={store}>
-            <Router basename="readero">
+            <Router >
                  <SettingsProvider>
                      <ReadingStatsProvider>
                          <StorageProvider>

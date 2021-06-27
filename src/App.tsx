@@ -1,5 +1,5 @@
 
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useLocation } from 'react-router-dom';
 import Providers from 'Providers';
 
 import Reader from './Pages/Reader';
@@ -9,18 +9,29 @@ import Menu from 'Components/Menu';
 
 import styles from './styles.module.scss';
 
+function A() {
+  const location = useLocation();
+  console.log(location)
+  return (
+      <Switch>
+        <Route path="/book/:id" exact component={Reader} />
+        <Route path="/" >
+            <Route path="/" exact component={Library} />
+            <Route path="/settings" exact component={Settings} />
+            <Menu />
+        </Route>
+      </Switch>
+  )
+}
+
 function App() {
+
+  
+
   return (
     <div className={styles.container}>
       <Providers>
-        <Switch>
-          <Route path="/book/:id" exact component={Reader} />
-          <Route path="/" >
-              <Route path="/" exact component={Library} />
-              <Route path="/settings" exact component={Settings} />
-              <Menu />
-          </Route>
-        </Switch>
+        <A />
       </Providers>
     </div>
   );

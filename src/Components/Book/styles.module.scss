@@ -78,7 +78,16 @@
         font-size: 11px;
         color: grey;
         display: grid;
-        grid-template-columns: max-content max-content;
+        grid-template-columns: max-content max-content max-content;
         justify-content: space-between;
+        justify-items: center;
+        align-items: center;
+
+        div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
     }
 }
