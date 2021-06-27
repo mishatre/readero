@@ -1,25 +1,26 @@
 {
   "files": {
-    "main.css": "/readero/static/css/main.d30ccb6d.chunk.css",
-    "main.js": "/readero/static/js/main.b5cb2ee7.chunk.js",
-    "main.js.map": "/readero/static/js/main.b5cb2ee7.chunk.js.map",
-    "runtime-main.js": "/readero/static/js/runtime-main.700c92a7.js",
-    "runtime-main.js.map": "/readero/static/js/runtime-main.700c92a7.js.map",
-    "static/js/2.cd1774ee.chunk.js": "/readero/static/js/2.cd1774ee.chunk.js",
-    "static/js/2.cd1774ee.chunk.js.map": "/readero/static/js/2.cd1774ee.chunk.js.map",
-    "static/js/3.d06875a4.chunk.js": "/readero/static/js/3.d06875a4.chunk.js",
-    "static/js/3.d06875a4.chunk.js.map": "/readero/static/js/3.d06875a4.chunk.js.map",
+    "main.css": "/readero/static/css/main.33d7202e.chunk.css",
+    "main.js": "/readero/static/js/main.89f1b165.chunk.js",
+    "main.js.map": "/readero/static/js/main.89f1b165.chunk.js.map",
+    "runtime-main.js": "/readero/static/js/runtime-main.f946510c.js",
+    "runtime-main.js.map": "/readero/static/js/runtime-main.f946510c.js.map",
+    "static/js/2.d1ed345b.chunk.js": "/readero/static/js/2.d1ed345b.chunk.js",
+    "static/js/2.d1ed345b.chunk.js.map": "/readero/static/js/2.d1ed345b.chunk.js.map",
+    "static/js/3.70158524.chunk.js": "/readero/static/js/3.70158524.chunk.js",
+    "static/js/3.70158524.chunk.js.map": "/readero/static/js/3.70158524.chunk.js.map",
     "index.html": "/readero/index.html",
     "service-worker.js": "/readero/service-worker.js",
     "service-worker.js.map": "/readero/service-worker.js.map",
-    "static/css/main.d30ccb6d.chunk.css.map": "/readero/static/css/main.d30ccb6d.chunk.css.map",
-    "static/js/2.cd1774ee.chunk.js.LICENSE.txt": "/readero/static/js/2.cd1774ee.chunk.js.LICENSE.txt",
+    "static/css/main.33d7202e.chunk.css.map": "/readero/static/css/main.33d7202e.chunk.css.map",
+    "static/js/2.d1ed345b.chunk.js.LICENSE.txt": "/readero/static/js/2.d1ed345b.chunk.js.LICENSE.txt",
     "static/media/index.scss": "/readero/static/media/SFUIDisplay-Ultralight.9711515f.woff",
     "static/media/angle-left-solid.da55b788.svg": "/readero/static/media/angle-left-solid.da55b788.svg",
     "static/media/styles.module.scss": "/readero/static/media/check.3a8ea223.svg",
     "static/media/font-icon.902ae4f9.svg": "/readero/static/media/font-icon.902ae4f9.svg",
     "static/media/guideline-icon.1b31a321.svg": "/readero/static/media/guideline-icon.1b31a321.svg",
     "static/media/library.30727038.svg": "/readero/static/media/library.30727038.svg",
+    "static/media/logo.0f006855.png": "/readero/static/media/logo.0f006855.png",
     "static/media/minus-small.ce20e032.svg": "/readero/static/media/minus-small.ce20e032.svg",
     "static/media/minus-solid.484e7581.svg": "/readero/static/media/minus-solid.484e7581.svg",
     "static/media/pause-solid.be1337ee.svg": "/readero/static/media/pause-solid.be1337ee.svg",
@@ -28,12 +29,13 @@
     "static/media/plus-solid.955f4201.svg": "/readero/static/media/plus-solid.955f4201.svg",
     "static/media/rest.d74d9462.svg": "/readero/static/media/rest.d74d9462.svg",
     "static/media/settings.30ae4518.svg": "/readero/static/media/settings.30ae4518.svg",
-    "static/media/text-icon.93d71768.svg": "/readero/static/media/text-icon.93d71768.svg"
+    "static/media/text-icon.93d71768.svg": "/readero/static/media/text-icon.93d71768.svg",
+    "static/media/trash.dec50ce7.svg": "/readero/static/media/trash.dec50ce7.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.700c92a7.js",
-    "static/js/2.cd1774ee.chunk.js",
-    "static/css/main.d30ccb6d.chunk.css",
-    "static/js/main.b5cb2ee7.chunk.js"
+    "static/js/runtime-main.f946510c.js",
+    "static/js/2.d1ed345b.chunk.js",
+    "static/css/main.33d7202e.chunk.css",
+    "static/js/main.89f1b165.chunk.js"
   ]
 }
