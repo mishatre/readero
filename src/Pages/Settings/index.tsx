@@ -6,9 +6,10 @@ import { ReactComponent as MinusSmallIcon } from 'assets/icons/minus-small.svg';
 import { ReactComponent as PlusSmallIcon } from 'assets/icons/plus-small.svg';
 
 import cn from 'classnames';
-import { useSettings } from 'Providers/Settings';
+import { useSettings } from 'providers/Settings';
 import { useCallback } from 'react';
 import { clamp } from 'lodash';
+import Menu from 'components/Menu';
 
 interface ISettingsProps {
 
@@ -16,8 +17,8 @@ interface ISettingsProps {
 
 function CheckBox({ active, onClick }: { active: boolean, onClick: () => void }) {
     return (
-        <div 
-            className={cn(styles.checkbox, { [styles.active]: active})} 
+        <div
+            className={cn(styles.checkbox, { [styles.active]: active })}
             onClick={onClick}
         />
     )
@@ -49,12 +50,12 @@ function ItemCheckbox({ title, onClick, value }: { title: string, value: boolean
     )
 }
 
-function ItemRange({ title, onChange, value, min = 0, max = 100 }: { 
-    title: string, 
-    value: number; 
+function ItemRange({ title, onChange, value, min = 0, max = 100 }: {
+    title: string,
+    value: number;
     min?: number;
     max?: number;
-    onChange: (number: number) => void 
+    onChange: (number: number) => void
 }) {
     return (
         <div className={cn(styles.item, styles.range)}>
@@ -66,15 +67,15 @@ function ItemRange({ title, onChange, value, min = 0, max = 100 }: {
                     {value} px
                 </div>
                 <div className={styles.incButtons}>
-                    <div 
-                        className={styles.button} 
-                        onClick={() => onChange(clamp(min, value-2, max))}
+                    <div
+                        className={styles.button}
+                        onClick={() => onChange(clamp(min, value - 2, max))}
                     >
                         <MinusSmallIcon />
                     </div>
-                    <div 
+                    <div
                         className={styles.button}
-                        onClick={() => onChange(clamp(min, value+2, max))}
+                        onClick={() => onChange(clamp(min, value + 2, max))}
                     >
                         <PlusSmallIcon />
                     </div>
@@ -94,7 +95,7 @@ function ItemGroup({ title, children }: { title?: string; children: React.ReactN
 }
 
 // eslint-disable-next-line no-empty-pattern
-const Settings = ({}: ISettingsProps) => {
+const Settings = ({ }: ISettingsProps) => {
 
     const { settings, set } = useSettings();
     const toggleORP = useCallback(() => set('ORP', v => !v), [set]);
@@ -107,30 +108,31 @@ const Settings = ({}: ISettingsProps) => {
             <div className={styles.settings}>
                 <ItemGroup title="Book Reader">
                     <Item title="Font family" value={settings.fontFamilyReader} />
-                    <ItemRange 
-                        title="Font size" 
-                        value={settings.fontSizeReader} 
+                    <ItemRange
+                        title="Font size"
+                        value={settings.fontSizeReader}
                         min={8}
                         max={24}
-                        onChange={(value) => {set('fontSizeReader', value)}}
+                        onChange={(value) => { set('fontSizeReader', value) }}
                     />
                 </ItemGroup>
                 <ItemGroup title="RSVP Reader">
                     <Item title="Font family" value={settings.fontFamilyRSVP} />
-                    <ItemRange 
-                        title="Font size" 
-                        value={settings.fontSizeRSVP} 
+                    <ItemRange
+                        title="Font size"
+                        value={settings.fontSizeRSVP}
                         min={24}
                         max={48}
-                        onChange={(value) => {set('fontSizeRSVP', value)}}
+                        onChange={(value) => { set('fontSizeRSVP', value) }}
                     />
                     <ItemCheckbox title="Show optimal recognition point" value={settings.ORP} onClick={toggleORP} />
                     <ItemCheckbox title="Show ORP guideline" value={settings.ORPGuideLine} onClick={toggleORPGuideline} />
                     <ItemCheckbox title="Slow down on long words" value={settings.slowDownOnLongWords} onClick={toggleSlowDown} />
                     <ItemCheckbox title="Show 50 previous words on pause" value={settings.showPreviousOnPause} onClick={toggleShowPreviousOnPause} />
-                    
+
                 </ItemGroup>
             </div>
+            <Menu />
         </div>
     );
 }

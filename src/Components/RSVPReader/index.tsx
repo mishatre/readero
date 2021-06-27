@@ -3,14 +3,14 @@ import cn from 'classnames';
 import useAccurateTimer from 'hooks/useAccurateTimer';
 import clamp from 'utils/clamp';
 import styles from './styles.module.scss';
-import { useSettings } from 'Providers/Settings';
+import { useSettings } from 'providers/Settings';
 import { IFontInfo } from 'types/fontInfo';
 
 interface IRSVPReaderProps {
     fontInfo: IFontInfo;
     width: number;
     mode: 'view' | 'play' | 'pause';
-    text: string;
+    words: string[];
     initialIndex?: number;
     onNextWord?: (index: number) => void;
     showPreviousOnPause: boolean;
@@ -20,7 +20,6 @@ interface IRSPVReaderState {
     currentWord: string;
     currentIndex: number;
     hasNextWord: boolean;
-    items: string[];
 }
 
 function usePrevious(value: any) {
@@ -39,12 +38,12 @@ class CharMeasurer {
     private ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
     private templateChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnoprstuvwxyz1234567890~!@#$%^&*()_+={}:'\"\\,./<>?";
     private chars: Map<string, number> = new Map();
-    constructor(fontInfo:IFontInfo) {
-        if("OffscreenCanvas" in globalThis) {
+    constructor(fontInfo: IFontInfo) {
+        if ("OffscreenCanvas" in globalThis) {
             this.ctx = new OffscreenCanvas(1, 1).getContext('2d')!;
         } else {
             this.ctx = document.createElement('canvas').getContext('2d')!;
-        }        
+        }
         this.ctx.font = `${fontInfo.fontSize}px ${fontInfo.fontFamily}`;
         this.measureChars();
     }
@@ -85,14 +84,15 @@ function useORPWord({ fontInfo, word, width }: { fontInfo: IFontInfo; word: stri
     const measureRef = useRef<CharMeasurer | null>(null);
 
     useEffect(() => {
-        if(measureRef.current) {
+        if (measureRef.current) {
             measureRef.current.setFont(fontInfo);
         }
     }, [fontInfo]);
 
     useEffect(() => {
         measureRef.current = new CharMeasurer(fontInfo);
-    }, []);   
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const [{ orpMiddlePointPx, maxOffset, maxWords }, set] = useState({
         maxOffset: 0,
@@ -101,9 +101,9 @@ function useORPWord({ fontInfo, word, width }: { fontInfo: IFontInfo; word: stri
     });
 
     useEffect(() => {
-        if(measureRef.current) {
+        if (measureRef.current) {
             // console.log(measureRef.current.longestWidth())
-            
+
             const maxWords = Math.floor((width || 0) / measureRef.current.longestWidth()) - 1;
             const orpPos = getOrpPos(maxWords) * measureRef.current.longestWidth() + measureRef.current.longestWidth() / 2;
             const maxOffset = getOrpPos(maxWords) + 1;
@@ -139,7 +139,7 @@ const RSVPReader = ({
     fontInfo,
     width,
     mode,
-    text,
+    words,
     initialIndex = 0,
     onNextWord,
     showPreviousOnPause,
@@ -147,69 +147,61 @@ const RSVPReader = ({
     const { settings } = useSettings();
 
     const [
-        { currentWord, currentIndex, hasNextWord, items },
+        { currentWord, currentIndex, hasNextWord },
         set,
     ] = useState<IRSPVReaderState>({
         currentWord: '',
         currentIndex: 0,
         hasNextWord: false,
-        items: [],
     });
 
     useEffect(() => {
-        if (!text) {
-            return;
-        }
 
-        const items = text.split(' ');
-        const wordCount = items.length;
+        const wordCount = words.length;
 
         const state = {
             currentWord: '',
             currentIndex: 0,
             hasNextWord: false,
-            items,
         };
 
         if (wordCount > 0) {
             const initial = clamp(0, initialIndex || 0, wordCount);
 
-            const currentWord = items[initial];
+            const currentWord = words[initial];
 
             if (currentWord) {
                 state.currentIndex = initial;
                 state.currentWord = currentWord;
-                state.hasNextWord = items.length > initial;
+                state.hasNextWord = wordCount > initial;
             }
         }
 
         set(state);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [text, onNextWord]);
+    }, [words, onNextWord]);
 
     const prevMode = usePrevious(mode);
     useEffect(() => {
         if (prevMode === 'view' && mode !== 'view') {
-            const items = text.split(' ');
-            const wordCount = items.length;
+            const wordCount = words.length;
 
             const state = {
                 currentWord: '',
                 currentIndex: 0,
                 hasNextWord: false,
-                items,
             };
 
             if (wordCount > 0) {
                 const initial = clamp(0, initialIndex || 0, wordCount);
 
-                const currentWord = items[initial];
+                const currentWord = words[initial];
 
                 if (currentWord) {
                     state.currentIndex = initial;
                     state.currentWord = currentWord;
-                    state.hasNextWord = items.length > initial;
+                    state.hasNextWord = wordCount > initial;
                 }
             }
 
@@ -225,18 +217,17 @@ const RSVPReader = ({
     const onTick = useCallback(() => {
         set((currState) => {
             const newState = { ...currState };
-            const nextWord = currState.items[currState.currentIndex + 1];
+            const nextWord = words[currState.currentIndex + 1];
             if (nextWord) {
                 newState.currentWord = nextWord;
                 newState.currentIndex++;
-                newState.hasNextWord =
-                    currState.items.length > newState.currentIndex;
+                newState.hasNextWord = words.length > newState.currentIndex;
             } else {
                 newState.hasNextWord = false;
             }
             return newState;
         });
-    }, []);
+    }, [words]);
 
     const delay = (60 / settings.wordsPerMinute) * 1000;
     useAccurateTimer(mode === 'play' && hasNextWord, delay, onTick);
@@ -258,9 +249,9 @@ const RSVPReader = ({
                 fontSize: `${fontInfo.fontSize}px`,
             }}
         >
-            
+
             <div className={styles.previous}>
-                {mode === 'pause' &&  showPreviousOnPause &&  items.slice(clamp(0, currentIndex - 50, items.length), currentIndex).join(' ')}
+                {mode === 'pause' && showPreviousOnPause && words.slice(clamp(0, currentIndex - 50, words.length), currentIndex).join(' ')}
             </div>
             <div
                 className={cn(styles.ORPGuideline, {

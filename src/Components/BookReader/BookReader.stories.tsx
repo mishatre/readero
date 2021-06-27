@@ -1,7 +1,7 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import BookReader from '.';
-import Providers from '../../Providers';
+import Providers from '../../providers';
 
 import 'styles/index.scss';
 

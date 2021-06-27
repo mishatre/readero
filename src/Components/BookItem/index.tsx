@@ -1,8 +1,8 @@
 
 import cn from 'classnames';
 
-import BookCover from "Components/BookCover";
-import { IBookInfo } from "Providers/Library";
+import BookCover from "components/BookCover";
+import { IBookInfo } from "providers/Library";
 
 import { ReactComponent as RestIcon } from 'assets/icons/rest.svg';
 
@@ -35,18 +35,18 @@ const BookItem = ({
         Math.floor((bookInfo.totalWords - currentWord) / (wordsPerMinute / 60)) * 1000;
 
     return (
-        <div 
-            className={cn(styles.container, { 
+        <div
+            className={cn(styles.container, {
                 [styles.selectable]: selectable,
                 [styles.selected]: selected,
             })}
         >
             <div className={styles.wrapper}>
                 <div className={styles.book} onClick={() => onBookClick(bookInfo.id)}>
-                    <BookCover 
-                        title={bookInfo.title} 
-                        creator={bookInfo.creator} 
-                        cover={bookInfo.cover ? (bookInfo.cover as string) : undefined } 
+                    <BookCover
+                        title={bookInfo.title}
+                        creator={bookInfo.creator}
+                        cover={bookInfo.cover ? (bookInfo.cover as string) : undefined}
                     />
                 </div>
                 <div className={styles.bottom}>

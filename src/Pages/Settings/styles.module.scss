@@ -4,7 +4,7 @@
     height: 100%;
 
     display: grid;
-    grid-template-rows: max-content minmax(0, 1fr);
+    grid-template-rows: max-content minmax(0, 1fr) max-content;
 
     .settings {
         background-color: #F2F1F6;

@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import { useSettings } from 'Providers/Settings';
+import { useSettings } from 'providers/Settings';
 
 import clamp from 'utils/clamp';
 import { timestampToHumanTime } from 'utils/time';

@@ -1,6 +1,6 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import BookItem from './';
+import BookItem from '.';
 
 export default {
     title: 'Reader/BookItem',

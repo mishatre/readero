@@ -1,10 +1,10 @@
 import cn from 'classnames';
 import useBackgroundColor from 'hooks/useBackgroundColor';
 import useElementSize from 'hooks/useElementSize';
-import { useSettings } from 'Providers/Settings';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { IBookInfo } from '../../Providers/Library';
-import { useReadingStats } from '../../Providers/ReadingStats';
+import { useSettings } from 'providers/Settings';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { IBookInfo } from '../../providers/Library';
+import { useReadingStats } from '../../providers/ReadingStats';
 import BookRender from '../BookRender';
 import ReaderControls from '../ReaderControls';
 import ReaderStatusBar from '../ReaderStatusBar';
@@ -17,46 +17,46 @@ import useFontWidth from 'hooks/useFontWidth';
 interface IBookReaderProps {
     info: IBookInfo;
     text: string;
+    words: string[];
 
     onBack: () => void,
 }
 
-function wrapText(text: string, maxWidth: number) {
-    if(maxWidth === 0) {
+function wrapText(words: string[], maxWidth: number) {
+    if (maxWidth === 0) {
         return [];
     }
-    const words = text.split(' ');
+
     const rows = [];
-    let bufferRow: string[] = [];
     let index = 0;
-    for(const word of words) {
-        bufferRow.push(word);
-        if(bufferRow.join(' ').length > maxWidth) {
-            const wrappedWord = bufferRow.pop();
+
+    let bufferLength = 0;
+
+    let i = 0;
+    let startIndex = 0;
+    let l = words.length;
+    while (i < l) {
+        const currWordLength = words[i].length;
+        if ((bufferLength + currWordLength + 1) > maxWidth) {
             rows.push({
                 index,
-                text: bufferRow.join(' '),
-                words: bufferRow,
+                startIndex: startIndex,
+                endIndex: i,
             });
-            index += bufferRow.length;
-            bufferRow = [wrappedWord!];
-        }        
-    }   
+            index += i - startIndex;
+            bufferLength = 0;
+            startIndex = i;
+        }
+        bufferLength += currWordLength + 1;
+        ++i;
+    }
 
-    return rows;    
-}
-
-function useWrappedText(text: string, maxWidth: number) {
-    const [rows, setRows] = useState<Array<{ index: number; text: string; words: string[]; }>>([]); 
-    useEffect(() => {
-        setRows(wrapText(text, maxWidth));
-    }, [text, maxWidth]);
     return rows;
 }
 
 const INCREMENT_VALUE = 20;
 
-const BookReader = ({ info, text, onBack }: IBookReaderProps) => {
+const BookReader = ({ info, text, words, onBack }: IBookReaderProps) => {
 
     const { settings, set } = useSettings();
 
@@ -142,7 +142,7 @@ const BookReader = ({ info, text, onBack }: IBookReaderProps) => {
     }
 
     const fontWidth = useFontWidth(readerFontInfo.fontFamily, readerFontInfo.fontSize)
-    const rows = useWrappedText(text, Math.floor((width - 10) / fontWidth));
+    const rows = useMemo(() => wrapText(words, Math.floor((width - 10) / fontWidth)), [words, width, fontWidth]);
 
     return (
         <div
@@ -160,7 +160,7 @@ const BookReader = ({ info, text, onBack }: IBookReaderProps) => {
                 onChangeFont={onChangeFont}
                 onSetORP={onSetORP}
                 onSetORPGuidelines={onSetORPGuidelines}
-                
+
             />
             <div className={styles.content}>
                 <div ref={ref} className={styles.reader}>
@@ -168,7 +168,7 @@ const BookReader = ({ info, text, onBack }: IBookReaderProps) => {
                         fontInfo={rsvpFontInfo}
                         width={width}
                         mode={mode}
-                        text={text}
+                        words={words}
                         initialIndex={stats.index}
                         onNextWord={onNextWord}
                         showPreviousOnPause={settings.showPreviousOnPause}
@@ -177,6 +177,7 @@ const BookReader = ({ info, text, onBack }: IBookReaderProps) => {
                         fontInfo={readerFontInfo}
                         width={width}
                         mode={mode}
+                        words={words}
                         rows={rows}
                         currentIndex={stats.index}
                         onCurrentIndexChange={onCurrentIndexChange}

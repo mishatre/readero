@@ -2,7 +2,7 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import ReaderTopBar from '.';
-import SettingsProvider from 'Providers/Settings';
+import SettingsProvider from 'providers/Settings';
 
 export default {
     title: 'Reader/ReaderTopBar',

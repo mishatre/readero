@@ -1,10 +1,10 @@
 .container {
 
-    grid-area: page;
+    // grid-area: page;
     height: 100%;
 
     display: grid;
-    grid-template-rows: max-content minmax(0, 1fr);
+    grid-template-rows: max-content minmax(0, 1fr) min-content;
 
     .listContainer {
         padding-top: 20px;

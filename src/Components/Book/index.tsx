@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ReactComponent as RestIcon } from 'assets/icons/rest.svg';
 import styles from './styles.module.scss';
 
-import { IBookInfo } from 'Providers/Library';
+import { IBookInfo } from 'providers/Library';
 import { useRef } from 'react';
 import { timestampToHumanTime } from 'utils/time';
 
@@ -30,11 +30,11 @@ function Book({ book, currentWord, wordsPerMinute, onClick }: IBookProps) {
                     [styles.nocover]: !book.cover,
                     [styles.nocover]: book.cover,
                 })}
-                // style={
-                //     book.cover
-                //         ? ({ '--cover': `url(${book.cover})` } as any)
-                //         : {}
-                // }
+            // style={
+            //     book.cover
+            //         ? ({ '--cover': `url(${book.cover})` } as any)
+            //         : {}
+            // }
             >
                 {(book.cover || !book.cover) && (
                     <div ref={wrapperRef} className={styles.bookWrapper}>

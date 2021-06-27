@@ -1,7 +1,7 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import PSVPReader from '.';
-import SettingsProvider from 'Providers/Settings';
+import SettingsProvider from 'providers/Settings';
 
 export default {
     title: 'Reader/PSVPReader',
@@ -19,6 +19,6 @@ const text = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et 
 export const Default = Template.bind({});
 Default.args = {
     mode: 'view',
-    text,
+    words: text.split(' '),
     initialIndex: 0,
 };

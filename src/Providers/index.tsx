@@ -7,6 +7,7 @@ import ReadingStatsProvider from './ReadingStats';
 import { store } from 'store';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import LoadingScreen from 'components/LoadingScreen';
 
 interface IProvidersProps {
     children: React.ReactNode;
@@ -26,15 +27,16 @@ const Providers = ({ children }: IProvidersProps) => {
 
     return (
         <Provider store={store}>
-            <Router >
-                 <SettingsProvider>
-                     <ReadingStatsProvider>
-                         <StorageProvider>
-                             {loaded && children}
+            <Router>
+                <SettingsProvider>
+                    <ReadingStatsProvider>
+                        <StorageProvider>
+                            {!loaded && <LoadingScreen />}
+                            {loaded && children}
                         </StorageProvider>
-                     </ReadingStatsProvider>
-                 </SettingsProvider>
-             </Router>
+                    </ReadingStatsProvider>
+                </SettingsProvider>
+            </Router>
         </Provider>
     );
 };
