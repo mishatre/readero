@@ -1,4 +1,3 @@
-
 import BookReader from 'components/BookReader';
 import { IBookInfo, useLibraryContext } from 'providers/Library';
 import { useCallback, useEffect, useState } from 'react';
@@ -8,16 +7,15 @@ import styles from './styles.module.scss';
 function useBook(id: string) {
     const { getBook } = useLibraryContext();
 
-    const [bookData, setBook] =
-        useState<{ info: IBookInfo; text: string; words: string[] } | null>(
-            null
-        );
+    const [bookData, setBook] = useState<{
+        info: IBookInfo;
+        words: string[];
+    } | null>(null);
 
     useEffect(() => {
-        getBook(id).then(({ info, text, words }) => {
+        getBook(id).then(({ info, words }) => {
             setBook({
                 info,
-                text,
                 words,
             });
         });
@@ -27,7 +25,6 @@ function useBook(id: string) {
 }
 
 const Reader = () => {
-
     const { id } = useParams<{ id: string }>();
     const bookInfo = useBook(id);
     const history = useHistory();
@@ -35,14 +32,13 @@ const Reader = () => {
 
     return (
         <div className={styles.container}>
-            {bookInfo &&
+            {bookInfo && (
                 <BookReader
                     info={bookInfo.info}
-                    text={bookInfo.text}
                     words={bookInfo.words}
                     onBack={onBack}
                 />
-            }
+            )}
         </div>
     );
 };

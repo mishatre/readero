@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import cn from 'classnames';
 import { FixedSizeList as List } from 'react-window';
 
 import useElementSize from 'hooks/useElementSize';
@@ -11,7 +10,6 @@ import { IFontInfo } from 'types/fontInfo';
 import styles from './styles.module.scss';
 import ListItem from './ListItem';
 
-
 interface IBookRenderProps {
     mode: 'view' | 'play' | 'pause';
     words: string[];
@@ -19,15 +17,13 @@ interface IBookRenderProps {
         index: number;
         startIndex: number;
         endIndex: number;
-        // text: string; words: string[]; 
+        // text: string; words: string[];
     }>;
     width: number;
     currentIndex: number;
     onCurrentIndexChange?: (index: number) => void;
-    fontInfo: IFontInfo,
+    fontInfo: IFontInfo;
 }
-
-
 
 const BookRender = ({
     mode,
@@ -66,12 +62,15 @@ const BookRender = ({
         [onCurrentIndexChange, rows]
     );
 
-    const contextValue = useMemo(() => ({
-        words,
-        rows,
-        currentIndex,
-        onRowClick,
-    }), [words, rows, currentIndex, onRowClick]);
+    const contextValue = useMemo(
+        () => ({
+            words,
+            rows,
+            currentIndex,
+            onRowClick,
+        }),
+        [words, rows, currentIndex, onRowClick]
+    );
 
     if (mode !== 'view') {
         return null;

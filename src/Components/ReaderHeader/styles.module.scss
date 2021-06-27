@@ -1,5 +1,4 @@
 .container {
-
     height: 41px;
     width: 100%;
 
@@ -22,9 +21,8 @@
         margin: auto 0;
 
         text-overflow: ellipsis;
-        overflow: hidden; 
-        white-space: nowrap; 
-
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     .button {
@@ -40,6 +38,7 @@
     // }
 
     .buttons {
+        min-width: 60px;
         // padding-right: 12px;
         display: grid;
         grid-template-columns: repeat(3, max-content);

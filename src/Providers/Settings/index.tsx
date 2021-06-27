@@ -1,5 +1,7 @@
 import createCtx from '../../utils/context';
 import { useCallback, useEffect, useState } from 'react';
+import { IFontInfo } from 'types/fontInfo';
+import useFontWidth from 'hooks/useFontWidth';
 
 type SetStateAction<S> = S | ((prevState: S) => S);
 
@@ -9,6 +11,9 @@ interface ISettingsProviderProps {
 
 interface ISettingsContext {
     settings: ISettings;
+    readerFontInfo: IFontInfo;
+    rsvpFontInfo: IFontInfo;
+    fontWidth: number;
     set: <K extends keyof ISettings>(
         key: K,
         value: SetStateAction<ISettings[K]>
@@ -36,7 +41,7 @@ const settingsList = [
     'ORP',
     'ORPGuideLine',
     'slowDownOnLongWords',
-    'showPreviousOnPause'
+    'showPreviousOnPause',
 ] as const;
 
 // const fontSettings = {
@@ -94,14 +99,36 @@ const SettingsProvider = ({ children }: ISettingsProviderProps) => {
         []
     );
 
+    const fontWidth = useFontWidth(
+        settings?.fontFamilyReader,
+        settings?.fontSizeReader
+    );
+
     if (!settings) {
         return null;
     }
+
+    const readerFontInfo = {
+        fontFamily: settings.fontFamilyReader,
+        fontSize: settings.fontSizeReader,
+        fontWeight: 'normal',
+        lineHeight: 17,
+    };
+
+    const rsvpFontInfo = {
+        fontFamily: settings.fontFamilyRSVP,
+        fontSize: settings.fontSizeRSVP,
+        fontWeight: 'normal',
+        lineHeight: 17,
+    };
 
     return (
         <Provider
             value={{
                 settings,
+                readerFontInfo,
+                rsvpFontInfo,
+                fontWidth,
                 set,
             }}
         >

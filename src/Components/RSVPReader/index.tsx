@@ -32,14 +32,15 @@ function usePrevious(value: any) {
 
 const getOrpPos = (length: number) => {
     return length === 1 ? 1 : Math.ceil((length - 1) / 4) + 1;
-}
+};
 
 class CharMeasurer {
     private ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
-    private templateChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnoprstuvwxyz1234567890~!@#$%^&*()_+={}:'\"\\,./<>?";
+    private templateChars =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnoprstuvwxyz1234567890~!@#$%^&*()_+={}:\'"\\,./<>?';
     private chars: Map<string, number> = new Map();
     constructor(fontInfo: IFontInfo) {
-        if ("OffscreenCanvas" in globalThis) {
+        if ('OffscreenCanvas' in globalThis) {
             this.ctx = new OffscreenCanvas(1, 1).getContext('2d')!;
         } else {
             this.ctx = document.createElement('canvas').getContext('2d')!;
@@ -48,10 +49,12 @@ class CharMeasurer {
         this.measureChars();
     }
     private measure(char: string) {
-        return this.ctx.measureText(char).width
+        return this.ctx.measureText(char).width;
     }
     measureChars() {
-        this.chars = new Map(this.templateChars.split('').map(v => [v, this.measure(v)]));
+        this.chars = new Map(
+            this.templateChars.split('').map((v) => [v, this.measure(v)])
+        );
     }
     setFont(fontInfo: IFontInfo) {
         this.ctx.font = `${fontInfo.fontSize}px ${fontInfo.fontFamily}`;
@@ -77,10 +80,15 @@ class CharMeasurer {
     }
 }
 
-
-
-function useORPWord({ fontInfo, word, width }: { fontInfo: IFontInfo; word: string; width: number; }) {
-
+function useORPWord({
+    fontInfo,
+    word,
+    width,
+}: {
+    fontInfo: IFontInfo;
+    word: string;
+    width: number;
+}) {
     const measureRef = useRef<CharMeasurer | null>(null);
 
     useEffect(() => {
@@ -104,8 +112,12 @@ function useORPWord({ fontInfo, word, width }: { fontInfo: IFontInfo; word: stri
         if (measureRef.current) {
             // console.log(measureRef.current.longestWidth())
 
-            const maxWords = Math.floor((width || 0) / measureRef.current.longestWidth()) - 1;
-            const orpPos = getOrpPos(maxWords) * measureRef.current.longestWidth() + measureRef.current.longestWidth() / 2;
+            const maxWords =
+                Math.floor((width || 0) / measureRef.current.longestWidth()) -
+                1;
+            const orpPos =
+                getOrpPos(maxWords) * measureRef.current.longestWidth() +
+                measureRef.current.longestWidth() / 2;
             const maxOffset = getOrpPos(maxWords) + 1;
 
             // console.log(measureRef.current.longestWidth())
@@ -114,7 +126,7 @@ function useORPWord({ fontInfo, word, width }: { fontInfo: IFontInfo; word: stri
                 maxOffset,
                 maxWords: maxWords - (maxOffset - getOrpPos(maxWords)),
                 orpMiddlePointPx: orpPos,
-            })
+            });
         }
     }, [width]);
 
@@ -128,11 +140,10 @@ function useORPWord({ fontInfo, word, width }: { fontInfo: IFontInfo; word: stri
     const chars = [
         <span key={1}>{lpad + r.substr(0, orp - 1)}</span>,
         <span key={2}>{r[orp - 1]}</span>,
-        <span key={3}>{trimmedWord.length > 2 ? r.substr(orp) : ''}</span>
+        <span key={3}>{trimmedWord.length > 2 ? r.substr(orp) : ''}</span>,
     ];
 
     return { chars, orpMiddlePointPx, maxOffset };
-
 }
 
 const RSVPReader = ({
@@ -156,7 +167,6 @@ const RSVPReader = ({
     });
 
     useEffect(() => {
-
         const wordCount = words.length;
 
         const state = {
@@ -249,20 +259,30 @@ const RSVPReader = ({
                 fontSize: `${fontInfo.fontSize}px`,
             }}
         >
-
-            <div className={styles.previous}>
-                {mode === 'pause' && showPreviousOnPause && words.slice(clamp(0, currentIndex - 50, words.length), currentIndex).join(' ')}
+            <div
+                className={cn(styles.previous, {
+                    [styles.show]: mode === 'pause' && showPreviousOnPause,
+                })}
+            >
+                {words
+                    .slice(
+                        clamp(0, currentIndex - 50, words.length),
+                        currentIndex
+                    )
+                    .join(' ')}
             </div>
             <div
                 className={cn(styles.ORPGuideline, {
                     [styles.disabled]: !settings.ORPGuideLine,
                     [styles.orp]: settings.ORP,
                 })}
-                style={{
-                    '--orpPos': `${orpMiddlePointPx}px`,
-                    fontFamily: 'SFMono',
-                    lineHeight: '82px',
-                } as any}
+                style={
+                    {
+                        '--orpPos': `${orpMiddlePointPx}px`,
+                        fontFamily: 'SFMono',
+                        lineHeight: '82px',
+                    } as any
+                }
             >
                 {chars}
             </div>

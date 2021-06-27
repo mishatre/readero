@@ -12,14 +12,11 @@ import ReaderHeader from '../ReaderHeader';
 import RSVPReader from '../RSVPReader';
 import styles from './styles.module.scss';
 
-import useFontWidth from 'hooks/useFontWidth';
-
 interface IBookReaderProps {
     info: IBookInfo;
-    text: string;
     words: string[];
 
-    onBack: () => void,
+    onBack: () => void;
 }
 
 function wrapText(words: string[], maxWidth: number) {
@@ -37,7 +34,7 @@ function wrapText(words: string[], maxWidth: number) {
     let l = words.length;
     while (i < l) {
         const currWordLength = words[i].length;
-        if ((bufferLength + currWordLength + 1) > maxWidth) {
+        if (bufferLength + currWordLength + 1 > maxWidth) {
             rows.push({
                 index,
                 startIndex: startIndex,
@@ -56,9 +53,14 @@ function wrapText(words: string[], maxWidth: number) {
 
 const INCREMENT_VALUE = 20;
 
-const BookReader = ({ info, text, words, onBack }: IBookReaderProps) => {
-
-    const { settings, set } = useSettings();
+const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
+    const {
+        settings,
+        readerFontInfo,
+        rsvpFontInfo,
+        fontWidth,
+        set,
+    } = useSettings();
 
     const [uiHidden, setUiHidden] = useState(false);
     const [mode, setMode] = useState<'view' | 'play' | 'pause'>('view');
@@ -108,14 +110,23 @@ const BookReader = ({ info, text, words, onBack }: IBookReaderProps) => {
     const onChangeFont = useCallback(() => {
         togglePlay();
     }, [togglePlay]);
-    const onSetORP = useCallback(() => set('ORP', v => !v), [set]);
-    const onSetORPGuidelines = useCallback(() => set('ORPGuideLine', v => !v), [set]);
+    const onSetORP = useCallback(() => set('ORP', (v) => !v), [set]);
+    const onSetORPGuidelines = useCallback(
+        () => set('ORPGuideLine', (v) => !v),
+        [set]
+    );
 
     // Controls
 
     const onPlayPause = useCallback(() => togglePlay(), [togglePlay]);
-    const onSpeedUp = useCallback(() => set('wordsPerMinute', (prev) => prev + INCREMENT_VALUE), [set]);
-    const onSpeedDown = useCallback(() => set('wordsPerMinute', (prev) => prev - INCREMENT_VALUE), [set]);
+    const onSpeedUp = useCallback(
+        () => set('wordsPerMinute', (prev) => prev + INCREMENT_VALUE),
+        [set]
+    );
+    const onSpeedDown = useCallback(
+        () => set('wordsPerMinute', (prev) => prev - INCREMENT_VALUE),
+        [set]
+    );
 
     const onReaderClick = useCallback(() => {
         if (mode === 'play' && uiHidden) {
@@ -127,22 +138,12 @@ const BookReader = ({ info, text, words, onBack }: IBookReaderProps) => {
         }
     }, [mode, uiHidden]);
 
-    const readerFontInfo = {
-        fontFamily: settings.fontFamilyReader,
-        fontSize: settings.fontSizeReader,
-        fontWeight: 'normal',
-        lineHeight: 17
-    }
-
-    const rsvpFontInfo = {
-        fontFamily: settings.fontFamilyRSVP,
-        fontSize: settings.fontSizeRSVP,
-        fontWeight: 'normal',
-        lineHeight: 17
-    }
-
-    const fontWidth = useFontWidth(readerFontInfo.fontFamily, readerFontInfo.fontSize)
-    const rows = useMemo(() => wrapText(words, Math.floor((width - 10) / fontWidth)), [words, width, fontWidth]);
+    const rows = useMemo(() => {
+        if (width === 0) {
+            return [];
+        }
+        return wrapText(words, Math.floor((width - 10) / fontWidth));
+    }, [words, width, fontWidth]);
 
     return (
         <div
@@ -155,12 +156,10 @@ const BookReader = ({ info, text, words, onBack }: IBookReaderProps) => {
                 mode={mode}
                 hidden={uiHidden}
                 title={info.title}
-
                 onBackButton={onBackButton}
                 onChangeFont={onChangeFont}
                 onSetORP={onSetORP}
                 onSetORPGuidelines={onSetORPGuidelines}
-
             />
             <div className={styles.content}>
                 <div ref={ref} className={styles.reader}>

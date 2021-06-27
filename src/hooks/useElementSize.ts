@@ -32,14 +32,12 @@ function useElementSize<T extends HTMLElement = HTMLDivElement>(
         const node = elementRef?.current;
         if (node) {
             const observer = new ResizeObserver(updateSize);
-            observer.observe(node, { box: 'content-box' })
+            observer.observe(node, { box: 'content-box' });
             updateSize();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    useEffect(() => { }, []);
-
-    // useEventListener('resize', updateSize);
+    useEffect(() => {}, []);
 
     return size;
 }

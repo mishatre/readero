@@ -9,6 +9,13 @@
     margin-top: -3em;
 
     .previous {
+        opacity: 0;
+        transition: opacity 300ms linear;
+        &.show {
+            opacity: 1;
+            transition: opacity 300ms linear;
+        }
+
         font-size: 16px;
         line-height: 1.5em;
         height: 4.5em;
@@ -23,12 +30,13 @@
     }
 
     .ORPGuideline {
-
         position: relative;
 
         border-top: 3px solid #000;
         border-bottom: 3px solid #000;
-        &::before, &::after {
+        transition: border 300ms linear;
+        &::before,
+        &::after {
             position: absolute;
             content: ' ';
             margin-left: var(--orpPos);
@@ -36,9 +44,11 @@
             height: 12px;
             background-color: black;
             left: 0;
+            opacity: 1;
+            transition: opacity 300ms linear;
         }
         &::before {
-            top:0;
+            top: 0;
         }
         &::after {
             bottom: 0;
@@ -47,16 +57,18 @@
         &.disabled {
             border-top: 3px solid transparent;
             border-bottom: 3px solid transparent;
-            &::before, &::after {
-                visibility: hidden;
+            transition: border 300ms linear;
+            &::before,
+            &::after {
+                opacity: 0;
+                transition: opacity 300ms linear;
             }
         }
-
     }
 
     .orp {
         :nth-child(2) {
-            color: #BC0B05;
+            color: #bc0b05;
         }
     }
 }

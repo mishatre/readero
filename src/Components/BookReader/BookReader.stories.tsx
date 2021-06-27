@@ -28,5 +28,5 @@ Default.args = {
 
         totalWords: textArray.reduce((acc, v) => acc + v.split(' ').length, 0),
     },
-    text: textArray.join(' '),
+    words: textArray,
 };
