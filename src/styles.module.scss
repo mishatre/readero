@@ -1,13 +1,6 @@
-
 .container {
-
+    overflow: hidden;
     height: 100%;
-
-    // display: grid;
-    // grid-template-rows: minmax(0, 1fr) max-content;
-    // grid-template-areas: 
-    //     "page"
-    //     "menu";
 }
 
 :global {
@@ -15,7 +8,7 @@
         opacity: 0;
         z-index: 1;
     }
-    
+
     .fade-enter.fade-enter-active {
         opacity: 1;
         transition: opacity 250ms ease-in;
