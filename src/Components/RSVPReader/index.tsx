@@ -108,7 +108,7 @@ function useORPWord({ fontInfo, word, width }: { fontInfo: IFontInfo; word: stri
             const orpPos = getOrpPos(maxWords) * measureRef.current.longestWidth() + measureRef.current.longestWidth() / 2;
             const maxOffset = getOrpPos(maxWords) + 1;
 
-            console.log(measureRef.current.longestWidth())
+            // console.log(measureRef.current.longestWidth())
 
             set({
                 maxOffset,

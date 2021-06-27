@@ -48,4 +48,17 @@
 
     }
 
+    :global {
+        .fade-enter {
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        .fade-enter.fade-enter-active {
+            background-color: red;
+            transition: opacity 250ms ease-in;
+        }
+    }
+    
+
 }

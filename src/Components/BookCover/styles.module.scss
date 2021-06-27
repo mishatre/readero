@@ -1,0 +1,108 @@
+
+.container {
+    
+    position: relative;
+
+    // background-color: #995621;
+    user-select: none;
+
+    height: 242px;
+    width: 164px;
+
+    background: linear-gradient(to right, 
+        #7E5230 0 0.33px, 
+        #703A19 0.33px 0.33px,
+        #723412 0.66px 0.65px,
+        #7C421E 1.31px 0.32px,
+        #AE8860 1.63px 0.32px,
+        #CEB79D 1.95px 0.32px,
+        #CDB59B 2.27px 0.32px,
+        #BD9771 2.59px 0.32px,
+        #B17F52 2.91px 1.6px,
+        #A87546 4.51px 0.32px,
+
+        #A16B3A 4.83px 0.32px,
+        #985C2A 5.15px 0.32px,
+        #925422 5.47px 0.32px,
+        #8E501E 5.79px 1.6px,
+
+        #945824 7.39px 0.32px,
+        #9D6533 7.71px 0.32px,
+        #A87648 8.03px 0.32px,
+        #B78C65 8.35px 0.32px,
+        #BE966E 8.67px 0.32px,
+        #BD946C 8.99px 0.32px,
+        #B6895F 9.31px 0.32px,
+        #AD7947 9.63px 0.32px,
+        #A56C38 9.95px 0.32px,
+        // transparent
+    ),
+    var(--imageOrColor);
+    background-size: contain;
+    box-shadow: 0 0 30px 2px rgba(0, 0, 0, 0.5), inset -1px 1px 2px rgba(255, 255, 255, 0.4);
+    margin: auto;
+    border-radius: 5px;
+
+    &:before {
+
+        position: absolute;
+
+        margin: 9px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        content: ' ';
+
+    }
+
+    .wrapper {
+
+        box-sizing: border-box;
+
+        padding: 14px;
+        height: 100%;
+
+        display: grid;
+        grid-template-rows: 0.25fr 0.5fr 0.25;
+        grid-template-areas: 
+            "title"
+            "noop"
+            "creator";
+
+        overflow: hidden; 
+
+        .title {
+
+            margin: auto 0;
+
+            grid-area: title;
+            text-align: center;
+            line-height: 1.5em;
+            height: 4.5em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            color: white;
+        }
+
+        .creator {
+
+            margin: auto 0;
+
+            grid-area: creator;
+            text-align: center;
+            line-height: 1.5em;
+            height: 4.5em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            color: white;
+
+        }
+    }
+
+}

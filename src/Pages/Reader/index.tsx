@@ -30,7 +30,7 @@ const Reader = () => {
     const { id } = useParams<{ id: string }>();
     const bookInfo = useBook(id);
     const history = useHistory();
-    const onBack = useCallback(() => history.goBack(), [history]);
+    const onBack = useCallback(() => history.push('/'), [history]);
 
     return (
         <div className={styles.container}>
