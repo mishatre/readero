@@ -10,7 +10,7 @@ import { useCallback } from 'react';
 import Menu from 'components/Menu';
 import clamp from 'utils/clamp';
 
-interface ISettingsProps {}
+interface ISettingsProps { }
 
 function CheckBox({
     active,
@@ -108,7 +108,7 @@ function ItemGroup({
 }
 
 // eslint-disable-next-line no-empty-pattern
-const Settings = ({}: ISettingsProps) => {
+const Settings = ({ }: ISettingsProps) => {
     const { settings, set } = useSettings();
     const toggleORP = useCallback(() => set('ORP', (v) => !v), [set]);
     const toggleORPGuideline = useCallback(
@@ -123,6 +123,7 @@ const Settings = ({}: ISettingsProps) => {
         () => set('showPreviousOnPause', (v) => !v),
         [set]
     );
+    const setRenderType = useCallback((value) => set('renderType', value), [set]);
     return (
         <div className={styles.container}>
             <Header title="Settings" />
@@ -154,17 +155,42 @@ const Settings = ({}: ISettingsProps) => {
                         }}
                     />
                 </ItemGroup>
-                <ItemGroup title="RSVP Reader features">
+                <ItemGroup title="RSVP Reader type">
                     <ItemCheckbox
-                        title="Show optimal recognition point"
-                        value={settings.ORP}
-                        onClick={toggleORP}
+                        title="Optimal recognition point"
+                        value={settings.renderType === 'ORP'}
+                        onClick={() => setRenderType('ORP')}
                     />
                     <ItemCheckbox
-                        title="Show ORP guideline"
-                        value={settings.ORPGuideLine}
-                        onClick={toggleORPGuideline}
+                        title="Text middle point"
+                        value={settings.renderType === 'middle'}
+                        onClick={() => setRenderType('middle')}
                     />
+                </ItemGroup>
+                {settings.renderType === 'ORP' &&
+                    <ItemGroup title="ORP features">
+                        <ItemCheckbox
+                            title="Show optimal recognition point"
+                            value={settings.ORP}
+                            onClick={toggleORP}
+                        />
+                        <ItemCheckbox
+                            title="Show ORP guideline"
+                            value={settings.ORPGuideLine}
+                            onClick={toggleORPGuideline}
+                        />
+                    </ItemGroup>
+                }
+                {settings.renderType === 'middle' &&
+                    <ItemGroup title="Middle point features">
+                        <ItemCheckbox
+                            title="Highlight text center"
+                            value={settings.ORP}
+                            onClick={toggleORP}
+                        />
+                    </ItemGroup>
+                }
+                <ItemGroup title="RSVP Reader general features">
                     <ItemCheckbox
                         title="Slow down on long words"
                         value={settings.slowDownOnLongWords}
@@ -180,7 +206,7 @@ const Settings = ({}: ISettingsProps) => {
                     <ItemCheckbox
                         title="Show forward/backward buttons"
                         value={false}
-                        onClick={() => {}}
+                        onClick={() => { }}
                     />
                 </ItemGroup>
             </div>

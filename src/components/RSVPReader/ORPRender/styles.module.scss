@@ -1,0 +1,49 @@
+
+.container {
+
+    line-height: 82px;
+
+    position: relative;
+
+    // Guideline
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    transition: border 300ms linear;
+    &::before,
+    &::after {
+        position: absolute;
+        content: ' ';
+        margin-left: var(--orpPos);
+        width: 4px;
+        height: 12px;
+        background-color: black;
+        left: 0;
+        opacity: 0;
+        transition: opacity 300ms linear;
+    }
+    &::before {
+        top: 0;
+    }
+    &::after {
+        bottom: 0;
+    }
+
+    &.highlight {
+        :nth-child(2) {
+            //TODO: Change to var
+            color: #bc0b05;
+        }
+    }
+
+    &.guideline {
+        border-top: 3px solid #000;
+        border-bottom: 3px solid #000;
+        transition: border 300ms linear;
+        &::before,
+        &::after {
+            opacity: 1;
+            transition: opacity 300ms linear;
+        }
+    }
+
+}

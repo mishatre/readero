@@ -23,6 +23,7 @@ interface ISettingsContext {
         width: number;
         height: number;
     };
+    renderType: 'ORP' | 'middle';
     set: <K extends keyof ISettings>(
         key: K,
         value: SetStateAction<ISettings[K]>
@@ -39,6 +40,7 @@ export interface ISettings {
     ORPGuideLine: boolean;
     slowDownOnLongWords: boolean;
     showPreviousOnPause: boolean;
+    renderType: 'ORP' | 'middle';
 }
 
 const settingsList = [
@@ -51,6 +53,7 @@ const settingsList = [
     'ORPGuideLine',
     'slowDownOnLongWords',
     'showPreviousOnPause',
+    'renderType'
 ] as const;
 
 const defaultSettings = {
@@ -63,7 +66,8 @@ const defaultSettings = {
     ORPGuideLine: true,
     slowDownOnLongWords: true,
     showPreviousOnPause: true,
-};
+    renderType: 'ORP',
+} as const;
 
 const [useSettings, Provider] = createCtx<ISettingsContext>();
 
@@ -138,6 +142,7 @@ const SettingsProvider = ({ children, dimensions }: ISettingsProviderProps) => {
                 fontWidth,
                 maxCharsPerRow,
                 dimensions,
+                renderType: settings.renderType,
                 set,
             }}
         >

@@ -1,0 +1,14 @@
+
+.container {
+
+    line-height: 82px;
+    text-align: center;
+
+    &.highlight {
+        :nth-child(2) {
+            //TODO: Change to var
+            color: #bc0b05;
+        }
+    }
+
+}
