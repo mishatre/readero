@@ -1,12 +1,11 @@
-
 import cn from 'classnames';
-import { clamp } from 'lodash';
+import clamp from 'utils/clamp';
 import styles from './styles.module.scss';
 
 interface IPreviousWordsProps {
-    mode: 'view' | 'play' | 'pause',
+    mode: 'view' | 'play' | 'pause';
     showPrevious: boolean;
-    words: string[],
+    words: string[];
     currentIndex: number;
 }
 
@@ -23,13 +22,10 @@ const PreviousWords = ({
             })}
         >
             {words
-                .slice(
-                    clamp(0, currentIndex - 50, words.length),
-                    currentIndex
-                )
+                .slice(clamp(0, currentIndex - 50, words.length), currentIndex)
                 .join(' ')}
         </div>
-    )
-}
+    );
+};
 
 export default PreviousWords;

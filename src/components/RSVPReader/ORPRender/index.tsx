@@ -1,4 +1,3 @@
-
 import cn from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { IFontInfo } from 'types/fontInfo';
@@ -97,13 +96,13 @@ function useORPWord({
 
     useEffect(() => {
         if (measureRef.current) {
-
             const maxWords =
                 Math.floor((width || 0) / measureRef.current.longestWidth()) -
                 1;
             const orpPos =
                 getOrpPos(maxWords) * measureRef.current.longestWidth() +
-                (measureRef.current.longestWidth() / 2) - 2;
+                measureRef.current.longestWidth() / 2 -
+                2;
             const maxOffset = getOrpPos(maxWords) + 1;
 
             set({
@@ -138,7 +137,6 @@ const ORPRender = ({
     highlight,
     guideline,
 }: IORPRenderProps) => {
-
     const { chars, orpPoint } = useORPWord({
         fontInfo,
         word,
@@ -151,15 +149,17 @@ const ORPRender = ({
                 [styles.highlight]: highlight,
                 [styles.guideline]: guideline,
             })}
-            style={{
-                '--orpPos': `${orpPoint}px`,
-                fontFamily: fontInfo.fontFamily,
-                fontSize: `${fontInfo.fontSize}px`,
-            } as IContainerCSSProperties}
+            style={
+                {
+                    '--orpPos': `${orpPoint}px`,
+                    fontFamily: fontInfo.fontFamily,
+                    fontSize: `${fontInfo.fontSize}px`,
+                } as IContainerCSSProperties
+            }
         >
             {chars}
         </div>
     );
-}
+};
 
 export default ORPRender;
