@@ -12,7 +12,7 @@
     background-color: #f5f5f5;
 
     display: grid;
-    grid-template-columns: max-content max-content;
+    grid-template-columns: repeat(3, max-content);
     align-content: space-around;
     justify-content: space-around;
 

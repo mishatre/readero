@@ -185,8 +185,10 @@ async function parseRootFile(archive: JsZip, rootFile: JsZip.JSZipObject) {
     const manifest = parseManifest(XMLData);
     const guide = parseGuide(XMLData);
 
+    // console.log(XMLData, spine)
+
     const processingItems = processItems(manifest, spine);
-    const { text, words } = await loadItems(archive, rootFile, processingItems);
+    const words = await loadItems(archive, rootFile, processingItems);
 
     const foundCover = findCover(manifest, guide);
     const cover = await loadCover(archive, rootFile, foundCover);
@@ -194,7 +196,6 @@ async function parseRootFile(archive: JsZip, rootFile: JsZip.JSZipObject) {
     return {
         cover,
         metadata,
-        text, 
         words,
     };
 }
@@ -354,28 +355,33 @@ async function loadItems(
     const domParser = new DOMParser();
     const loadedItems = await Promise.all(loadingItems);
 
-    const chapters = loadedItems.map((item) => '' + domParser
-    .parseFromString(item, 'application/xhtml+xml')
-    .body.textContent);
+    const chapters = loadedItems.map((item) => {
+
+        const sentences: string[] = [];
+        const sentencesNodes = domParser.parseFromString(item, 'application/xhtml+xml').body.querySelectorAll('p');
+        sentencesNodes.forEach((value) => {
+            sentences.push(value.textContent || '');
+        })
+
+        return sentences;
+
+        // return '' + domParser.parseFromString(item, 'application/xhtml+xml').body.textContent
+    });
 
     const words = [];
-    const textArray = [];
 
     for(const chapter of chapters) {
+        for(const sentence of chapter) {
 
-        const wordsArray = chapter?.replaceAll('\n', ' ')?.split(' ').filter(v => v !== '');
+            const wordsArray = sentence?.replaceAll('\n', ' ')?.split(' ').filter(v => v !== '').map(v => v.trim());
+            if(wordsArray?.length > 0) {
+                words.push(...wordsArray);
+            }
 
-        if(wordsArray?.length > 0) {
-            words.push(...wordsArray);
-            textArray.push(wordsArray.join(' '))
         }
-
     }
 
-    return {
-        text: textArray.join(' '),
-        words,
-    }
+    return words
 
 }
 

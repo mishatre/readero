@@ -37,7 +37,7 @@ const ReaderHeader = ({
             onClick={(e) => e.stopPropagation()}
         >
             <div
-                className={cn(styles.button, styles.backButton)}
+                className={styles.button}
                 onClick={onBackButton}
             >
                 <AngleLeftIcon />

@@ -19,7 +19,7 @@ export interface IBookInfo {
 interface ILibraryContext {
     library: IBookInfo[];
 
-    loadBooks: (files: Blob[]) => void;
+    loadBooks: (files: File[]) => void;
     deleteBooks: (id: string[]) => void;
 
     getBook: (
@@ -52,9 +52,30 @@ const LibraryProvider = ({ children }: ILibraryProviderProps) => {
     }, []);
 
     const loadBooks = useCallback(
-        async (files: Blob[]) => {
+        async (files: File[]) => {
+
             const parsedBooks = await Promise.all(
-                Array.from(files).map((file) => epubToTxt(file))
+                Array.from(files).map((file) => {
+
+                    if(file.type === 'text/plain') {
+                        return file.text().then((text) => {
+                            console.log(text)
+                            const words = text.replaceAll('\n', '').split(' ');
+                            const bookInfo = {
+                                metadata: {
+                                    identifier: file.name,
+                                    title: file.name,   
+                                } as { identifier: string; title?: string; creator?: string },
+                                cover: null as Blob | null,
+                                words
+                            }
+                            return bookInfo;
+                        })                       
+                    } else {
+                        return epubToTxt(file);
+                    }
+
+                })
             );
 
             const loadedBooks = parsedBooks

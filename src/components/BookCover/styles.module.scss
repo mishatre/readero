@@ -7,39 +7,16 @@
     height: 224px;
     width: 152px;
 
-    background: linear-gradient(
-            to right,
-            #7e5230 0 0.33px,
-            #703a19 0.33px 0.33px,
-            #723412 0.66px 0.65px,
-            #7c421e 1.31px 0.32px,
-            #ae8860 1.63px 0.32px,
-            #ceb79d 1.95px 0.32px,
-            #cdb59b 2.27px 0.32px,
-            #bd9771 2.59px 0.32px,
-            #b17f52 2.91px 1.6px,
-            #a87546 4.51px 0.32px,
-            #a16b3a 4.83px 0.32px,
-            #985c2a 5.15px 0.32px,
-            #925422 5.47px 0.32px,
-            #8e501e 5.79px 1.6px,
-            #945824 7.39px 0.32px,
-            #9d6533 7.71px 0.32px,
-            #a87648 8.03px 0.32px,
-            #b78c65 8.35px 0.32px,
-            #be966e 8.67px 0.32px,
-            #bd946c 8.99px 0.32px,
-            #b6895f 9.31px 0.32px,
-            #ad7947 9.63px 0.32px,
-            #a56c38 9.95px 0.32px,
-            // transparent
-        ),
-        var(--imageOrColor);
+    &.nocover {
+        background: linear-gradient(180deg, #995621 0%, #6F3013 49.48%, #390B05 100%), linear-gradient(90deg, rgba(255, 255, 255, 0) 4.9%, rgba(255, 255, 255, 0.4) 5.49%, rgba(255, 255, 255, 0) 6.08%)
+    }
+
+    background: var(--imageOrColor);
     background-size: contain;
     box-shadow: 0 0 30px 2px rgba(0, 0, 0, 0.5),
         inset -1px 1px 2px rgba(255, 255, 255, 0.4);
     margin: auto;
-    border-radius: 5px;
+    border-radius: 2px 5px 5px 2px;
 
     &:before {
         position: absolute;
@@ -53,6 +30,19 @@
         right: 0;
 
         content: ' ';
+    }
+
+    &:after {
+        border-radius: 2px 0 0 2px;
+        position: absolute;
+        content: ' ';
+        top: 0;
+        background: url('../../assets/book.png');
+        mix-blend-mode: soft-light;
+        opacity: 0.5;
+        background-size: contain;
+        width: 13px;
+        height: 100%;
     }
 
     .wrapper {

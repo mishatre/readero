@@ -18,5 +18,3 @@ Default.args = {
     currentWord: 5000,
 };
 
-// export const LoggedOut = Template.bind({});
-// LoggedOut.args = {};

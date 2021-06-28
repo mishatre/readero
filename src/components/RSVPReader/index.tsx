@@ -110,17 +110,14 @@ function useORPWord({
 
     useEffect(() => {
         if (measureRef.current) {
-            // console.log(measureRef.current.longestWidth())
 
             const maxWords =
                 Math.floor((width || 0) / measureRef.current.longestWidth()) -
                 1;
             const orpPos =
                 getOrpPos(maxWords) * measureRef.current.longestWidth() +
-                measureRef.current.longestWidth() / 2;
+                (measureRef.current.longestWidth() / 2) - 2;
             const maxOffset = getOrpPos(maxWords) + 1;
-
-            // console.log(measureRef.current.longestWidth())
 
             set({
                 maxOffset,
@@ -193,8 +190,9 @@ const RSVPReader = ({
     }, [words, onNextWord]);
 
     const prevMode = usePrevious(mode);
+    const prevInitialIndex = usePrevious(initialIndex);
     useEffect(() => {
-        if (prevMode === 'view' && mode !== 'view') {
+        if ((prevMode === 'view' && mode !== 'view') || (mode !== 'view' && prevInitialIndex !== initialIndex)) {
             const wordCount = words.length;
 
             const state = {
@@ -218,7 +216,7 @@ const RSVPReader = ({
             set(state);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [prevMode, mode]);
+    }, [initialIndex, prevMode, mode]);
 
     useEffect(() => {
         onNextWord?.(currentIndex);

@@ -1,0 +1,22 @@
+
+.container {
+
+    height: 41px;
+    width: 100%;
+
+    padding-top: env(safe-area-inset-top);
+
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+
+    user-select: none;
+
+    .button {
+        height: 40px;
+        width: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+}

@@ -6,6 +6,9 @@ import { ReactComponent as PauseIcon } from 'assets/icons/pause-solid.svg';
 import { ReactComponent as MinusIcon } from 'assets/icons/minus-solid.svg';
 import { ReactComponent as PlusIcon } from 'assets/icons/plus-solid.svg';
 
+import { ReactComponent as HistoryBackIcon } from 'assets/icons/history-back.svg';
+import { ReactComponent as HistoryForwardIcon } from 'assets/icons/history-forward.svg';
+
 import styles from './styles.module.scss';
 
 interface IReaderControlsProps {
@@ -15,9 +18,11 @@ interface IReaderControlsProps {
     onPlayPause: () => void;
     onSpeedUp: () => void;
     onSpeedDown: () => void;
+    onHistoryGoBack: () => void;
+    onHistoryGoForward: () => void;
 }
 
-const ReaderControls = ({ mode, hidden, wordsPerMinute, onPlayPause, onSpeedUp, onSpeedDown }: IReaderControlsProps) => {
+const ReaderControls = ({ mode, hidden, wordsPerMinute, onPlayPause, onSpeedUp, onSpeedDown, onHistoryGoBack, onHistoryGoForward }: IReaderControlsProps) => {
     return (
         <div 
             className={cn(styles.container, { 
@@ -25,7 +30,7 @@ const ReaderControls = ({ mode, hidden, wordsPerMinute, onPlayPause, onSpeedUp, 
             })}
             onClick={(e) => e.stopPropagation()}
         >
-            <div className={styles.buttons}>
+            <div className={styles.middle}>
                 <div
                     className={styles.button}
                     onClick={onSpeedDown}
@@ -45,7 +50,24 @@ const ReaderControls = ({ mode, hidden, wordsPerMinute, onPlayPause, onSpeedUp, 
                     <PlusIcon />
                 </div>
             </div>
-            <div className={styles.bottom}>{wordsPerMinute}</div>
+            <div className={styles.bottom}>
+                <div
+                    className={styles.button}
+                    onClick={onHistoryGoBack}
+                >
+                    <HistoryBackIcon />
+                </div>
+                <div className={styles.wpm}>
+                    <div>{wordsPerMinute || 420}</div>
+                    <div className={styles.label}>wpm</div>
+                </div>
+                <div
+                    className={styles.button}
+                    onClick={onHistoryGoForward}
+                >
+                    <HistoryForwardIcon />
+                </div>
+            </div>
         </div>
     );
 };

@@ -33,16 +33,10 @@
         align-items: center;
     }
 
-    // .backButton {
-    //     margin-left: 12px;
-    // }
-
     .buttons {
         min-width: 60px;
-        // padding-right: 12px;
         display: grid;
         grid-template-columns: repeat(3, max-content);
-        // grid-column-gap: 32px;
         justify-content: flex-end;
     }
 }

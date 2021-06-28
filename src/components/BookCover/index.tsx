@@ -1,4 +1,5 @@
 
+import cn from 'classnames';
 import styles from './styles.module.scss';
 
 interface IBookCoverProps {
@@ -11,7 +12,7 @@ const BookCover = ({ title, creator, cover }: IBookCoverProps) => {
 
     return (
         <div 
-            className={styles.container}
+            className={cn(styles.container, { [styles.nocover]: cover })}
             style={{
                 '--imageOrColor': cover ? `url(${cover})` : '#995621',
             } as any}

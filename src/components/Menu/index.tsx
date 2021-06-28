@@ -2,6 +2,7 @@
 import cn from 'classnames';
 import { Link, useLocation } from 'react-router-dom';
 import { ReactComponent as LibraryIcon } from 'assets/icons/library.svg';
+import { ReactComponent as ThunderIcon } from 'assets/icons/thunder.svg';
 import { ReactComponent as SettingsIcon } from 'assets/icons/settings.svg';
 import styles from './styles.module.scss';
 
@@ -22,6 +23,15 @@ const Menu = ({}: IMenuProps) => {
             >
                 <LibraryIcon />
                 Library
+            </Link>
+            <Link
+                to="/statistics" 
+                className={cn(styles.item, { 
+                    [styles.selected]: location.pathname === '/statistics'
+                })}
+            >
+                <ThunderIcon />
+                Statistics
             </Link>
             <Link
                 to="/settings"

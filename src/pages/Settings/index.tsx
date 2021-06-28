@@ -153,6 +153,8 @@ const Settings = ({}: ISettingsProps) => {
                             set('fontSizeRSVP', value);
                         }}
                     />
+                </ItemGroup>
+                <ItemGroup title="RSVP Reader features">
                     <ItemCheckbox
                         title="Show optimal recognition point"
                         value={settings.ORP}
@@ -172,6 +174,13 @@ const Settings = ({}: ISettingsProps) => {
                         title="Show 50 previous words on pause"
                         value={settings.showPreviousOnPause}
                         onClick={toggleShowPreviousOnPause}
+                    />
+                </ItemGroup>
+                <ItemGroup >
+                    <ItemCheckbox
+                        title="Show forward/backward buttons"
+                        value={false}
+                        onClick={() => {}}
                     />
                 </ItemGroup>
             </div>

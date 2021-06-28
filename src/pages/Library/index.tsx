@@ -50,6 +50,9 @@ const Library = () => {
             history.push(`/book/${id}`);
         }
     }, [editing, history]);
+    const onRestClick = useCallback((id: string) => {
+        history.push(`/bookInfo/${id}`);
+    }, [history]);
 
     const onSelectAll = useCallback(() => {
         setSelected((prev) => {
@@ -87,7 +90,7 @@ const Library = () => {
                             currentWord={getStats(book.id).index}
                             wordsPerMinute={settings.wordsPerMinute}
                             onBookClick={onBookClick}
-                            onRestClick={() => { }}
+                            onRestClick={onRestClick}
                             selectable={editing}
                             selected={selected.includes(book.id)}
                         />

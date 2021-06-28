@@ -11,6 +11,7 @@ import ReaderStatusBar from '../ReaderStatusBar';
 import ReaderHeader from '../ReaderHeader';
 import RSVPReader from '../RSVPReader';
 import styles from './styles.module.scss';
+import clamp from 'utils/clamp';
 
 interface IBookReaderProps {
     info: IBookInfo;
@@ -89,10 +90,13 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
 
     const onCurrentIndexChange = useCallback(
         (index: number) => {
-            setStats(info.id, 'index', index);
+            setStats(info.id, 'index', clamp(0, index, info.totalWords));
         },
-        [info.id, setStats]
+        [info.id, info.totalWords, setStats]
     );
+
+    const onHistoryGoBack = useCallback(() => onCurrentIndexChange(stats.index - 15), [onCurrentIndexChange, stats.index]);
+    const onHistoryGoForward = useCallback(() => onCurrentIndexChange(stats.index + 15), [onCurrentIndexChange, stats.index]);
 
     const ref = useRef<HTMLDivElement>(null);
     const { width } = useElementSize(ref);
@@ -142,7 +146,7 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
         if (width === 0) {
             return [];
         }
-        return wrapText(words, Math.floor((width - 10) / fontWidth));
+        return wrapText(words, Math.floor((width ) / fontWidth));
     }, [words, width, fontWidth]);
 
     return (
@@ -189,6 +193,8 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
                     onPlayPause={onPlayPause}
                     onSpeedUp={onSpeedUp}
                     onSpeedDown={onSpeedDown}
+                    onHistoryGoBack={onHistoryGoBack}
+                    onHistoryGoForward={onHistoryGoForward}
                 />
                 <ReaderStatusBar
                     mode={mode}

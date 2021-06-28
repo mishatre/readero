@@ -35,7 +35,7 @@ const Reader = () => {
             {bookInfo && (
                 <BookReader
                     info={bookInfo.info}
-                    words={bookInfo.words}
+                    words={bookInfo.words}//bookInfo.words
                     onBack={onBack}
                 />
             )}

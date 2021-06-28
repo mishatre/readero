@@ -1,0 +1,8 @@
+
+.container {
+    grid-area: page;
+    height: 100%;
+
+    display: grid;
+    grid-template-rows: max-content minmax(0, 1fr) max-content;
+}

@@ -7,7 +7,7 @@
 
     .content {
         display: grid;
-        grid-template-rows: minmax(max-content, 1fr) max-content max-content;
+        grid-template-rows: 1fr max-content max-content;
         padding: 12px 40px 0 40px;
     }
 
