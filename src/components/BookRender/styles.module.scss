@@ -12,11 +12,18 @@
             background-color: darkgrey;
         }
 
-        .row {
-            white-space: nowrap;
+        .item {
 
-            .selected {
-                color: #EC130E;
+            .row {
+
+                padding: 0 40px;
+
+                white-space: nowrap;
+
+                .selected {
+                    color: #EC130E;
+                }
+
             }
         }
     }

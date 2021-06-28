@@ -13,31 +13,62 @@ import ListItem from './ListItem';
 interface IBookRenderProps {
     mode: 'view' | 'play' | 'pause';
     words: string[];
-    rows: Array<{
-        index: number;
-        startIndex: number;
-        endIndex: number;
-        // text: string; words: string[];
-    }>;
     width: number;
     currentIndex: number;
     onCurrentIndexChange?: (index: number) => void;
+    maxCharsPerRow: number;
     fontInfo: IFontInfo;
+}
+
+function wrapText(words: string[], maxWidth: number) {
+    if (maxWidth === 0) {
+        return [];
+    }
+
+    const rows = [];
+    let index = 0;
+
+    let bufferLength = 0;
+
+    let i = 0;
+    let startIndex = 0;
+    let l = words.length;
+    while (i < l) {
+        const currWordLength = words[i].length;
+        if (bufferLength + currWordLength > maxWidth) {
+            rows.push({
+                index,
+                startIndex: startIndex,
+                endIndex: i,
+            });
+            index += i - startIndex;
+            bufferLength = 0;
+            startIndex = i;
+        }
+        bufferLength += currWordLength + 1;
+        ++i;
+    }
+
+    return rows;
 }
 
 const BookRender = ({
     mode,
     words,
-    rows,
     width,
     currentIndex,
     onCurrentIndexChange,
-
+    maxCharsPerRow,
     fontInfo,
 }: IBookRenderProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const listRef = useRef<List>(null);
     const { height } = useElementSize(ref);
+
+    const rows = useMemo(() => wrapText(words, maxCharsPerRow), [
+        words,
+        maxCharsPerRow,
+    ]);
 
     useEffect(() => {
         if (listRef.current) {
@@ -90,7 +121,7 @@ const BookRender = ({
                     ref={listRef}
                     height={height}
                     width={width}
-                    itemSize={24}
+                    itemSize={20}
                     itemCount={rows.length}
                     className={styles.list}
                     overscanCount={20}

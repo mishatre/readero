@@ -20,38 +20,6 @@ interface IBookReaderProps {
     onBack: () => void;
 }
 
-function wrapText(words: string[], maxWidth: number) {
-    if (maxWidth === 0) {
-        return [];
-    }
-
-    const rows = [];
-    let index = 0;
-
-    let bufferLength = 0;
-
-    let i = 0;
-    let startIndex = 0;
-    let l = words.length;
-    while (i < l) {
-        const currWordLength = words[i].length;
-        if (bufferLength + currWordLength + 1 > maxWidth) {
-            rows.push({
-                index,
-                startIndex: startIndex,
-                endIndex: i,
-            });
-            index += i - startIndex;
-            bufferLength = 0;
-            startIndex = i;
-        }
-        bufferLength += currWordLength + 1;
-        ++i;
-    }
-
-    return rows;
-}
-
 const INCREMENT_VALUE = 20;
 
 function usePlayer() {
@@ -156,11 +124,6 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
         }
     }, [mode, uiHidden]);
 
-    const rows = useMemo(() => wrapText(words, maxCharsPerRow), [
-        words,
-        maxCharsPerRow,
-    ]);
-
     return (
         <div
             className={cn(styles.container, {
@@ -190,10 +153,10 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
                     />
                     <BookRender
                         fontInfo={readerFontInfo}
-                        width={dimensions.width - 80}
+                        width={dimensions.width}
                         mode={mode}
                         words={words}
-                        rows={rows}
+                        maxCharsPerRow={maxCharsPerRow}
                         currentIndex={stats.index}
                         onCurrentIndexChange={onCurrentIndexChange}
                     />

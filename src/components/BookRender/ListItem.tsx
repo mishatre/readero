@@ -23,20 +23,22 @@ const ListItem = ({ style, index }: IListItemProps) => {
     const row = words.slice(rows[index].startIndex, rows[index].endIndex);
 
     return (
-        <div className={styles.row} style={style}>
-            {row.map((item, wordIndex) => (
-                <span
-                    key={(index + 1) * wordIndex}
-                    onClick={() => onRowClick(index, wordIndex)}
-                    className={cn({
-                        [styles.selected]:
-                            index === rowIndex &&
-                            wordIndex === colIndex,
-                    })}
-                >
-                    {' ' + item + ' '}
-                </span>
-            ))}
+        <div className={styles.item} style={style}>
+            <div className={styles.row}>
+                {row.map((item, wordIndex) => (
+                    <span
+                        key={(index + 1) * wordIndex}
+                        onClick={() => onRowClick(index, wordIndex)}
+                        className={cn({
+                            [styles.selected]:
+                                index === rowIndex &&
+                                wordIndex === colIndex,
+                        })}
+                    >
+                        {' ' + item + ' '}
+                    </span>
+                ))}
+            </div>
         </div>
     );
 }
