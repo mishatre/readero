@@ -4,9 +4,11 @@ import Providers from 'providers';
 
 import Reader from './pages/Reader';
 import Library from './pages/Library';
+import Statistics from './pages/Statistics';
 import Settings from 'pages/Settings';
 
 import styles from './styles.module.scss';
+import BookInfo from 'pages/BookInfo';
 
 function A() {
     const location = useLocation();
@@ -25,8 +27,10 @@ function A() {
             >
                 <Switch location={location}>
                     <Route path="/book/:id" exact component={Reader} />
+                    <Route path="/bookInfo/:id" exact component={BookInfo} />
                     <Route path="/">
                         <Route path="/" exact component={Library} />
+                        <Route path="/statistics" exact component={Statistics} />
                         <Route path="/settings" exact component={Settings} />
                     </Route>
                 </Switch>
