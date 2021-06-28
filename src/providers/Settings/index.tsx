@@ -1,11 +1,15 @@
 import createCtx from '../../utils/context';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { IFontInfo } from 'types/fontInfo';
 import useFontWidth from 'hooks/useFontWidth';
 
 type SetStateAction<S> = S | ((prevState: S) => S);
 
 interface ISettingsProviderProps {
+    dimensions: {
+        width: number;
+        height: number;
+    };
     children: React.ReactNode;
 }
 
@@ -14,6 +18,11 @@ interface ISettingsContext {
     readerFontInfo: IFontInfo;
     rsvpFontInfo: IFontInfo;
     fontWidth: number;
+    maxCharsPerRow: number;
+    dimensions: {
+        width: number;
+        height: number;
+    };
     set: <K extends keyof ISettings>(
         key: K,
         value: SetStateAction<ISettings[K]>
@@ -44,13 +53,6 @@ const settingsList = [
     'showPreviousOnPause',
 ] as const;
 
-// const fontSettings = {
-//     fontFamily: 'Liberation Mono',
-//     fontSizeRSVP: 48,
-//     fontSizeReader: 16,
-//     linHeight: 'normal',
-// }
-
 const defaultSettings = {
     fontFamilyRSVP: 'SFMono',
     fontFamilyReader: 'Liberation Mono',
@@ -65,7 +67,7 @@ const defaultSettings = {
 
 const [useSettings, Provider] = createCtx<ISettingsContext>();
 
-const SettingsProvider = ({ children }: ISettingsProviderProps) => {
+const SettingsProvider = ({ children, dimensions }: ISettingsProviderProps) => {
     const [settings, setSettings] = useState<ISettings | null>(null);
 
     useEffect(() => {
@@ -104,6 +106,11 @@ const SettingsProvider = ({ children }: ISettingsProviderProps) => {
         settings?.fontSizeReader
     );
 
+    const maxCharsPerRow = useMemo(
+        () => Math.floor((dimensions.width - 80) / fontWidth),
+        [dimensions.width, fontWidth]
+    );
+
     if (!settings) {
         return null;
     }
@@ -129,6 +136,8 @@ const SettingsProvider = ({ children }: ISettingsProviderProps) => {
                 readerFontInfo,
                 rsvpFontInfo,
                 fontWidth,
+                maxCharsPerRow,
+                dimensions,
                 set,
             }}
         >

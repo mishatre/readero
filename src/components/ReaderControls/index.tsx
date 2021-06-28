@@ -15,56 +15,55 @@ interface IReaderControlsProps {
     mode: 'view' | 'play' | 'pause';
     hidden: boolean;
     wordsPerMinute: number;
-    onPlayPause: () => void;
+    onPlay: () => void;
+    onPause: () => void;
     onSpeedUp: () => void;
     onSpeedDown: () => void;
     onHistoryGoBack: () => void;
     onHistoryGoForward: () => void;
 }
 
-const ReaderControls = ({ mode, hidden, wordsPerMinute, onPlayPause, onSpeedUp, onSpeedDown, onHistoryGoBack, onHistoryGoForward }: IReaderControlsProps) => {
+const ReaderControls = ({
+    mode,
+    hidden,
+    wordsPerMinute,
+    onPlay,
+    onPause,
+    onSpeedUp,
+    onSpeedDown,
+    onHistoryGoBack,
+    onHistoryGoForward,
+}: IReaderControlsProps) => {
     return (
-        <div 
-            className={cn(styles.container, { 
-                [styles.hidden]: hidden 
+        <div
+            className={cn(styles.container, {
+                [styles.hidden]: hidden,
             })}
             onClick={(e) => e.stopPropagation()}
         >
             <div className={styles.middle}>
-                <div
-                    className={styles.button}
-                    onClick={onSpeedDown}
-                >
+                <div className={styles.button} onClick={onSpeedDown}>
                     <MinusIcon />
                 </div>
-                <div 
-                    className={styles.button} 
-                    onClick={onPlayPause}
+                <div
+                    className={styles.button}
+                    onClick={mode === 'play' ? onPause : onPlay}
                 >
                     {mode === 'play' ? <PauseIcon /> : <PlayIcon />}
                 </div>
-                <div
-                    className={styles.button}
-                    onClick={onSpeedUp}
-                >
+                <div className={styles.button} onClick={onSpeedUp}>
                     <PlusIcon />
                 </div>
             </div>
             <div className={styles.bottom}>
-                <div
-                    className={styles.button}
-                    onClick={onHistoryGoBack}
-                >
+                <div className={styles.button} onClick={onHistoryGoBack}>
                     <HistoryBackIcon />
                 </div>
                 <div className={styles.wpm}>
                     <div>{wordsPerMinute || 420}</div>
                     <div className={styles.label}>wpm</div>
                 </div>
-                <div
-                    className={styles.button}
-                    onClick={onHistoryGoForward}
-                >
+                <div className={styles.button} onClick={onHistoryGoForward}>
                     <HistoryForwardIcon />
                 </div>
             </div>

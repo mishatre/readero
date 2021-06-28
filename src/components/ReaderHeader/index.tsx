@@ -1,4 +1,3 @@
-
 import { memo } from 'react';
 import cn from 'classnames';
 
@@ -13,7 +12,7 @@ interface IReaderHeaderProps {
     title: string;
     mode: 'view' | 'play' | 'pause';
     hidden: boolean;
-    onBackButton: () => void,
+    onBackButton: () => void;
     onChangeFont: () => void;
     onSetORP: () => void;
     onSetORPGuidelines: () => void;
@@ -26,33 +25,29 @@ const ReaderHeader = ({
     onBackButton,
     onChangeFont,
     onSetORP,
-    onSetORPGuidelines
+    onSetORPGuidelines,
 }: IReaderHeaderProps) => {
-
     return (
-        <div 
-            className={cn(styles.container, { 
-                [styles.hidden]: hidden 
+        <div
+            className={cn(styles.container, {
+                [styles.hidden]: hidden,
             })}
             onClick={(e) => e.stopPropagation()}
         >
-            <div
-                className={styles.button}
-                onClick={onBackButton}
-            >
+            <div className={styles.backButton} onClick={onBackButton}>
                 <AngleLeftIcon />
             </div>
             {mode === 'view' && <span className={styles.title}>{title}</span>}
             <div className={styles.buttons}>
                 {mode !== 'view' && (
                     <>
-                        <div className={cn(styles.button)} onClick={onChangeFont}>
-                            <FontIcon />
-                        </div>
                         <div
                             className={cn(styles.button)}
-                            onClick={onSetORP}
+                            onClick={onChangeFont}
                         >
+                            <FontIcon />
+                        </div>
+                        <div className={cn(styles.button)} onClick={onSetORP}>
                             <TextIcon />
                         </div>
                         <div

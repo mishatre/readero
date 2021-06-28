@@ -1,4 +1,3 @@
-
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import ReaderControls from '.';
@@ -11,9 +10,9 @@ export default {
 
 const Template: ComponentStory<typeof ReaderControls> = (args) => (
     <div style={{ margin: '10px', border: '1px solid #000' }}>
-        <SettingsProvider>
-            <ReaderControls {...args} />
-        </SettingsProvider>
+        {/* <SettingsProvider> */}
+        <ReaderControls {...args} />
+        {/* </SettingsProvider> */}
     </div>
 );
 

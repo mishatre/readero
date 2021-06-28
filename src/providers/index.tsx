@@ -6,6 +6,7 @@ import ReadingStatsProvider from './ReadingStats';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import LoadingScreen from 'components/LoadingScreen';
+import useRootDimension from 'hooks/useRootDimensions';
 
 interface IProvidersProps {
     children: React.ReactNode;
@@ -22,9 +23,14 @@ const Providers = ({ children }: IProvidersProps) => {
         });
     }, []);
 
+    const dimensions = useRootDimension();
+    if (!dimensions) {
+        return null;
+    }
+
     return (
         <Router>
-            <SettingsProvider>
+            <SettingsProvider dimensions={dimensions}>
                 <ReadingStatsProvider>
                     <StorageProvider>
                         {!loaded && <LoadingScreen />}
