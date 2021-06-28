@@ -54,39 +54,51 @@ function wrapText(words: string[], maxWidth: number) {
 
 const INCREMENT_VALUE = 20;
 
+function usePlayer() {
+    const [mode, setMode] = useState<'view' | 'play' | 'pause'>('view');
+
+    const play = useCallback(() => setMode('play'), []);
+    const pause = useCallback(() => setMode('pause'), []);
+    const toggle = useCallback(() => {
+        setMode((value) => {
+            if (value === 'play') {
+                return 'pause';
+            }
+            return 'play';
+        });
+    }, []);
+    const reset = useCallback(() => setMode('view'), []);
+
+    return {
+        mode,
+        play,
+        pause,
+        toggle,
+        reset,
+    };
+}
+
 const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
     const {
         settings,
         readerFontInfo,
         rsvpFontInfo,
         fontWidth,
+        dimensions,
+        maxCharsPerRow,
         set,
     } = useSettings();
 
-    const [uiHidden, setUiHidden] = useState(false);
-    const [mode, setMode] = useState<'view' | 'play' | 'pause'>('view');
     const { stats, setStats } = useReadingStats(info.id);
+    const [uiHidden, setUiHidden] = useState(false);
+
+    const { mode, play, pause, reset } = usePlayer();
+    useBackgroundColor(mode === 'view' ? '#FEFEFE' : '#edd1b0');
+
     const onNextWord = useCallback(
         (index: number) => setStats(info.id, 'index', index),
         [info.id, setStats]
     );
-
-    useBackgroundColor(mode === 'view' ? '#FEFEFE' : '#edd1b0');
-
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-    const togglePlay = useCallback(() => {
-        setMode((value) => {
-            if (value === 'play') {
-                if (timerRef.current) {
-                    clearTimeout(timerRef.current);
-                    timerRef.current = null;
-                }
-                return 'pause';
-            }
-            return 'play';
-        });
-    }, []);
 
     const onCurrentIndexChange = useCallback(
         (index: number) => {
@@ -95,25 +107,28 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
         [info.id, info.totalWords, setStats]
     );
 
-    const onHistoryGoBack = useCallback(() => onCurrentIndexChange(stats.index - 15), [onCurrentIndexChange, stats.index]);
-    const onHistoryGoForward = useCallback(() => onCurrentIndexChange(stats.index + 15), [onCurrentIndexChange, stats.index]);
-
-    const ref = useRef<HTMLDivElement>(null);
-    const { width } = useElementSize(ref);
+    const onHistoryGoBack = useCallback(
+        () => onCurrentIndexChange(stats.index - 15),
+        [onCurrentIndexChange, stats.index]
+    );
+    const onHistoryGoForward = useCallback(
+        () => onCurrentIndexChange(stats.index + 15),
+        [onCurrentIndexChange, stats.index]
+    );
 
     // Header
 
     const onBackButton = useCallback(() => {
         if (mode === 'pause' || mode === 'play') {
-            setMode('view');
+            reset();
         } else {
             onBack();
         }
-    }, [mode, onBack]);
+    }, [mode, reset, onBack]);
 
     const onChangeFont = useCallback(() => {
-        togglePlay();
-    }, [togglePlay]);
+        pause();
+    }, [pause]);
     const onSetORP = useCallback(() => set('ORP', (v) => !v), [set]);
     const onSetORPGuidelines = useCallback(
         () => set('ORPGuideLine', (v) => !v),
@@ -122,7 +137,6 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
 
     // Controls
 
-    const onPlayPause = useCallback(() => togglePlay(), [togglePlay]);
     const onSpeedUp = useCallback(
         () => set('wordsPerMinute', (prev) => prev + INCREMENT_VALUE),
         [set]
@@ -142,12 +156,10 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
         }
     }, [mode, uiHidden]);
 
-    const rows = useMemo(() => {
-        if (width === 0) {
-            return [];
-        }
-        return wrapText(words, Math.floor((width ) / fontWidth));
-    }, [words, width, fontWidth]);
+    const rows = useMemo(() => wrapText(words, maxCharsPerRow), [
+        words,
+        maxCharsPerRow,
+    ]);
 
     return (
         <div
@@ -166,10 +178,10 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
                 onSetORPGuidelines={onSetORPGuidelines}
             />
             <div className={styles.content}>
-                <div ref={ref} className={styles.reader}>
+                <div className={styles.reader}>
                     <RSVPReader
                         fontInfo={rsvpFontInfo}
-                        width={width}
+                        width={dimensions.width - 80}
                         mode={mode}
                         words={words}
                         initialIndex={stats.index}
@@ -178,7 +190,7 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
                     />
                     <BookRender
                         fontInfo={readerFontInfo}
-                        width={width}
+                        width={dimensions.width - 80}
                         mode={mode}
                         words={words}
                         rows={rows}
@@ -190,7 +202,8 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
                     mode={mode}
                     hidden={uiHidden}
                     wordsPerMinute={settings.wordsPerMinute}
-                    onPlayPause={onPlayPause}
+                    onPlay={play}
+                    onPause={pause}
                     onSpeedUp={onSpeedUp}
                     onSpeedDown={onSpeedDown}
                     onHistoryGoBack={onHistoryGoBack}
