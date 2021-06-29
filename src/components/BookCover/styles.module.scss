@@ -7,21 +7,23 @@
     height: 224px;
     width: 152px;
 
-    &.nocover {
-        background: linear-gradient(180deg, #995621 0%, #6F3013 49.48%, #390B05 100%), linear-gradient(90deg, rgba(255, 255, 255, 0) 4.9%, rgba(255, 255, 255, 0.4) 5.49%, rgba(255, 255, 255, 0) 6.08%)
-    }
+    // &.nocover {
+        --leather: url('../../assets/icons/leather2.png');
+        background: linear-gradient(180deg, rgba(233, 109, 14, 0.245) 0%, rgba(87, 41, 6, 0.5) 100%), var(--leather), #94511d;
+        background-blend-mode: soft-light, soft-light, normal;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset -1px 1px 1px rgba(237, 200, 171, 0.27);
+        background-size: 77%;
+        border-radius: 2px 5px 5px 2px;
+        // background: linear-gradient(180deg, #995621 0%, #6F3013 49.48%, #390B05 100%), linear-gradient(90deg, rgba(255, 255, 255, 0) 4.9%, rgba(255, 255, 255, 0.4) 5.49%, rgba(255, 255, 255, 0) 6.08%)
+    // }
 
-    background: var(--imageOrColor);
-    background-size: contain;
-    box-shadow: 0 0 30px 2px rgba(0, 0, 0, 0.5),
-        inset -1px 1px 2px rgba(255, 255, 255, 0.4);
+    // background: var(--imageOrColor);
     margin: auto;
-    border-radius: 2px 5px 5px 2px;
 
     &:before {
         position: absolute;
 
-        margin: 9px;
+        margin: 8px 6px 8px 15px;
         border: 1px solid rgba(255, 255, 255, 0.5);
 
         top: 0;
@@ -48,7 +50,8 @@
     .wrapper {
         box-sizing: border-box;
 
-        padding: 14px;
+        padding: 8px 6px 8px 15px;
+        // padding: 14px;
         height: 100%;
 
         display: grid;
