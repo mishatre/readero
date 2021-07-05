@@ -1,5 +1,6 @@
 import JsZip from 'jszip';
 import parser from 'fast-xml-parser';
+import { stripHtml, CbObj } from 'string-strip-html';
 import mime from 'mime-types';
 
 type PickByValue<T, V> = Pick<
@@ -188,7 +189,7 @@ async function parseRootFile(archive: JsZip, rootFile: JsZip.JSZipObject) {
     // console.log(XMLData, spine)
 
     const processingItems = processItems(manifest, spine);
-    const words = await loadItems(archive, rootFile, processingItems);
+    const {words, paragraphs} = await loadItems(archive, rootFile, processingItems);
 
     const foundCover = findCover(manifest, guide);
     const cover = await loadCover(archive, rootFile, foundCover);
@@ -196,7 +197,7 @@ async function parseRootFile(archive: JsZip, rootFile: JsZip.JSZipObject) {
     return {
         cover,
         metadata,
-        words,
+        words, paragraphs,
     };
 }
 
@@ -352,36 +353,55 @@ async function loadItems(
         const filePath = [path, href].join('/');
         loadingItems.push(archive.files[filePath].async('text'));
     }
-    const domParser = new DOMParser();
+
+    const cb = ({
+        tag,
+        deleteFrom,
+        deleteTo,
+        insert,
+        rangesArr,
+        proposedReturn,
+      }: CbObj) => {
+        if (tag.name === 'p') {
+            // do something depending on what's in the current tag
+            // console.log(JSON.stringify(tag, null, 4));
+            rangesArr.push(deleteFrom!, deleteTo!, insert + '\n');
+        } else {
+          // default action which does nothing different from normal, non-callback operation
+          rangesArr.push(deleteFrom!, deleteTo!, insert);
+          // you might want to do something different, depending on "tag" contents.
+        }
+      };
+
     const loadedItems = await Promise.all(loadingItems);
-
     const chapters = loadedItems.map((item) => {
-
-        const sentences: string[] = [];
-        const sentencesNodes = domParser.parseFromString(item, 'application/xhtml+xml').body.querySelectorAll('p');
-        sentencesNodes.forEach((value) => {
-            sentences.push(value.textContent || '');
-        })
-
-        return sentences;
-
-        // return '' + domParser.parseFromString(item, 'application/xhtml+xml').body.textContent
+        return stripHtml(item, { cb }).result.split('\n').filter(v => v !== '').map(text => text.trim().split(' '));
     });
 
     const words = [];
+    const paragraphs: [number, number[]][] = [];
 
     for(const chapter of chapters) {
-        for(const sentence of chapter) {
-
-            const wordsArray = sentence?.replaceAll('\n', ' ')?.split(' ').filter(v => v !== '').map(v => v.trim());
-            if(wordsArray?.length > 0) {
-                words.push(...wordsArray);
-            }
-
+        for(const paragraph of chapter) {
+            paragraphs.push([
+                words.length,
+                paragraph.map(word => word.length)
+            ]);
+            words.push(...paragraph);
         }
     }
 
-    return words
+    // console.log(chapters)
+
+    console.log({
+        words,
+        paragraphs,
+    })
+
+    return {
+        words,
+        paragraphs,
+    }
 
 }
 

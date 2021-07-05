@@ -12,10 +12,12 @@ import ReaderHeader from '../ReaderHeader';
 import RSVPReader from '../RSVPReader';
 import styles from './styles.module.scss';
 import clamp from 'utils/clamp';
+import useKeyPress from 'hooks/useKeyPress';
 
 interface IBookReaderProps {
     info: IBookInfo;
     words: string[];
+    paragraphs: [number, number[]][];
 
     onBack: () => void;
 }
@@ -46,7 +48,7 @@ function usePlayer() {
     };
 }
 
-const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
+const BookReader = ({ info, words, paragraphs, onBack }: IBookReaderProps) => {
     const {
         settings,
         readerFontInfo,
@@ -62,7 +64,13 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
 
     const { mode, play, pause, reset } = usePlayer();
     useBackgroundColor(mode === 'view' ? '#FEFEFE' : '#edd1b0');
-
+    useKeyPress(' ', () => {
+        if(mode === 'pause' || mode === 'view') {
+            play();
+        } else if(mode === 'play') {
+            pause();
+        }
+    }, [mode]);
     const onNextWord = useCallback(
         (index: number) => setStats(info.id, 'index', index),
         [info.id, setStats]
@@ -156,6 +164,7 @@ const BookReader = ({ info, words, onBack }: IBookReaderProps) => {
                         width={dimensions.width}
                         mode={mode}
                         words={words}
+                        paragraphs={paragraphs}
                         maxCharsPerRow={maxCharsPerRow}
                         currentIndex={stats.index}
                         onCurrentIndexChange={onCurrentIndexChange}

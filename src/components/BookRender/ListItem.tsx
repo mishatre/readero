@@ -10,22 +10,25 @@ interface IListItemProps {
 
 const ListItem = ({ style, index }: IListItemProps) => {
 
-    const { words, rows, currentIndex, onRowClick } = useBookRendererContext();
+    const { words, paragraphs, currentIndex, onRowClick } = useBookRendererContext();
+
+    const [startIndex, items] = paragraphs[index];
 
     let rowIndex = -1;
     let colIndex = -1;
 
-    if (!rows[index + 1] || currentIndex < rows[index + 1].index) {
+    if (!paragraphs[index + 1] || currentIndex < paragraphs[index + 1][0]) {
         rowIndex = index;
-        colIndex = currentIndex - rows[index].index;
+        colIndex = currentIndex - paragraphs[index][0];
     }
 
-    const row = words.slice(rows[index].startIndex, rows[index].endIndex);
+    const row = words.slice(startIndex, startIndex + items.length).join(' ');// index === rowIndex ? words.slice(startIndex, startIndex + items.length).join(' ') : '';
 
     return (
         <div className={styles.item} style={style}>
             <div className={styles.row}>
-                {row.map((item, wordIndex) => (
+                {row}
+                {/* {row.map((item, wordIndex) => (
                     <span
                         key={(index + 1) * wordIndex}
                         onClick={() => onRowClick(index, wordIndex)}
@@ -37,7 +40,7 @@ const ListItem = ({ style, index }: IListItemProps) => {
                     >
                         {' ' + item + ' '}
                     </span>
-                ))}
+                ))} */}
             </div>
         </div>
     );

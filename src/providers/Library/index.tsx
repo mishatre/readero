@@ -27,6 +27,7 @@ interface ILibraryContext {
     ) => Promise<{
         info: IBookInfo;
         words: string[];
+        paragraphs: [number, number[]][];
     }>;
 }
 
@@ -67,7 +68,8 @@ const LibraryProvider = ({ children }: ILibraryProviderProps) => {
                                     title: file.name,   
                                 } as { identifier: string; title?: string; creator?: string },
                                 cover: null as Blob | null,
-                                words
+                                words,
+                                paragraphs: [] as [number, number[]][],
                             }
                             return bookInfo;
                         })                       
@@ -98,6 +100,7 @@ const LibraryProvider = ({ children }: ILibraryProviderProps) => {
                         id: bookInfo.id,
                         info: bookInfo,
                         words: book.words,
+                        paragraphs: book.paragraphs,
                         cover: book.cover,
                         coverUrl: book.cover
                             ? URL.createObjectURL(book.cover)
@@ -106,8 +109,8 @@ const LibraryProvider = ({ children }: ILibraryProviderProps) => {
                 });
 
             await Promise.all(
-                loadedBooks.map(({ id, words }) =>
-                    localforage.setItem(id, words)
+                loadedBooks.map(({ id, words, paragraphs }) =>
+                    localforage.setItem(id, {words, paragraphs})
                 )
             );
 
@@ -166,11 +169,12 @@ const LibraryProvider = ({ children }: ILibraryProviderProps) => {
 
     const getBook = useCallback(
         async (id: string) => {
-            const words = (await localforage.getItem<string[]>(id)) || [];
+            const {words, paragraphs} = (await localforage.getItem<{ words: string[], paragraphs: [number, number[]][]}>(id)) || {words: [], paragraphs: []};
             const info = library!.find((item) => item.id === id)!;
             return {
                 info,
-                words,
+                words, 
+                paragraphs,
             };
         },
         [library]

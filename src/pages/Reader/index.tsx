@@ -10,13 +10,15 @@ function useBook(id: string) {
     const [bookData, setBook] = useState<{
         info: IBookInfo;
         words: string[];
+        paragraphs: [number, number[]][];
     } | null>(null);
 
     useEffect(() => {
-        getBook(id).then(({ info, words }) => {
+        getBook(id).then(({ info, words, paragraphs }) => {
             setBook({
                 info,
                 words,
+                paragraphs
             });
         });
     }, [id, getBook]);
@@ -36,6 +38,7 @@ const Reader = () => {
                 <BookReader
                     info={bookInfo.info}
                     words={bookInfo.words}//bookInfo.words
+                    paragraphs={bookInfo.paragraphs}
                     onBack={onBack}
                 />
             )}
